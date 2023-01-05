@@ -1,0 +1,42 @@
+<div class="header-container shadow" >
+	<div class="menu-toggler-container" *ngIf="!isLandingPage">
+		<a class="menu-toggler" role="button" (click)="onToggleSideNavCanvas()">
+			<i class="fa fa-bars"></i>
+		</a>
+	</div>
+	<!-- <div class="logo-container text-right">
+		<img [ngClass]="isLandingPage ? 'ms-2' : '' " id="appLogoImage" src="assets/images/MicrosoftTeams-image.png"
+			alt="Company Logo">
+		<!-- <h4 class="ps-2 mb-0">Unilever</h4> -->
+	<!-- </div>  -->
+	<div class="logo-container text-right cLogo">
+		<img [ngClass]="isLandingPage ? 'ms-3' : '' " class="c_logo_image"  src="assets/images/D_A_heading.jpg "
+			alt="Company Logo">
+	  <img [ngClass]="isLandingPage ? 'ms-3' : '' " class="c_logo_image" src="assets/images/U_pull_it.png "
+			alt="Company Logo">	
+			<!-- <h4 class="ps-2 mb-0">Unilever</h4> -->
+	</div>
+	<div class="spacer heading" >
+		<!-- <h2 class=" fs-4 mt-2 mx-auto">U-PULL-IT</h2> -->
+	</div>
+
+	<div class="user-details" (click)="toggleDropdown()" >
+		<div class="header-details">
+			<p class="user-name">{{userName}}</p>
+			<small class="user-role">{{user?.isAdmin ? 'Admin' : ''}}</small>
+		</div>
+		<div class="user-icon ">
+			<i class="fa fa-user"></i>
+		</div>
+		<div id="navbar-dropdown" class="dropdown-menu shadow dropdown-collapsed">
+			<!-- <div class="dropdown-item">
+				<span class="dropdown-item-icon"><i class="fa fa-user-o"></i></span>
+				<span class="dropdown-item-link">Profile</span>
+			</div> -->
+			<div class="dropdown-item" (click)="onLogout()">
+				<span class="dropdown-item-icon"><i class="fa fa-sign-out"></i></span>
+				<span class="dropdown-item-link" (click)="onLogout()">Sign Out</span>
+			</div>
+		</div>
+	</div>
+</div>

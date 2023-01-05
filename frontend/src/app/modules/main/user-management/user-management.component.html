@@ -1,0 +1,219 @@
+<div class="page-header">
+  <div class="header-left">
+    <div class="header-text">
+      <div class="header-title">User Management</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="btn btn-sm btn-primary" (click)="addUser()">Add User</button>
+  </div>
+</div>
+<div class="page-container">
+  <div class="table-responsive shadow">
+    <table class="table table-striped">
+      <thead class="header-dark">
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Business Function</th>
+          <th>Permission</th>
+          <!-- <th>Email</th> -->
+          <th class="text-center">Status</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="!users?.length">
+          <tr>
+            <td colspan="6">
+              <span class="mt-2 fst-italic">No Users Exists</span>
+            </td>
+          </tr>
+        </ng-container>
+        <ng-container *ngIf="users?.length">
+          <tr *ngFor="let user of users | slice: pagination.start:pagination.end; index as i"
+            [@fadeIn]="{ value: '', params: { duration: '300ms', delay: i * 60 + 'ms' }}">
+            <td>{{ user?.firstName || "-" }}</td>
+            <td>{{ user?.lastName || "-" }}</td>
+            <td>{{ user?.businessName || "-" }}</td>
+            <td>{{ user?.accessType || "-" }}</td>
+            <!-- <td>{{ user?.email || "-" }}</td> -->
+            <td>
+              <div class="d-flex justify-content-center">
+                <span>Inactive</span>
+                <div class="form-check form-switch mx-2">
+                  <input (click)="changeStatus(user)" class="form-check-input" type="checkbox"
+                    id="flexSwitchCheckDefault" [checked]="user?.status === 'active'" />
+                </div>
+                <span>Active</span>
+              </div>
+            </td>
+            <td>
+              <div class="text-center">
+                <button class="btn btn-sm py-0 mr-1" (click)="onView(user)">
+                  <i class="fa fa-eye"></i>
+                </button>
+                <button class="btn btn-sm py-0 mr-1" (click)="onEdit(user)">
+                  <i class="fa fa-pencil"></i>
+                </button>
+                <button class="btn btn-sm py-0 mr-1" (click)="onDelete(user)" *ngIf="user?.isAdmin === false">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+  <div class="mt-4">
+    <nav>
+      <ul class="pagination justify-content-end px-3">
+        <li class="page-item me-3">
+          <select class="page-link" style="height: 35px" (change)="onEntriesChange()"
+            [(ngModel)]="pagination.itemsPerPage">
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option [value]="pagination.totalLength">All</option>
+          </select>
+        </li>
+        <li class="page-item" [ngClass]="pagination.currentPage - 1 === 0 ? 'disabled' : ''" (click)="
+            pagination.currentPage - 1 > 0 &&
+              onSelectPage(pagination.currentPage - 1)
+          ">
+          <a class="page-link" role="button" tabindex="-1" aria-disabled="true"><i class="fa fa-chevron-left"></i></a>
+        </li>
+        <li class="page-item" [ngClass]="pagination.currentPage === i + 1 ? 'active' : ''"
+          *ngFor="let item of pagination.pages; let i = index">
+          <a class="page-link" role="button" (click)="onSelectPage(i + 1)">{{
+            i + 1
+            }}</a>
+        </li>
+        <li class="page-item" [ngClass]="
+            pagination.currentPage === pagination.pages.length ? 'disabled' : ''
+          " (click)="
+            pagination.currentPage < pagination.pages.length &&
+              onSelectPage(pagination.currentPage + 1)
+          ">
+          <a class="page-link" role="button"><i class="fa fa-chevron-right"></i></a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<div #userModalRef class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">
+          {{ selectedUser ? "Edit" : "Add" }} User
+        </h5>
+        <span type="button" class="close" (click)="userModal.hide()" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fa fa-times"></i></span>
+        </span>
+      </div>
+      <div class="modal-body">
+        <form class="sign-up-form" [formGroup]="userForm" (ngSubmit)="onSubmit()">
+          <div class="row">
+            <div class="col-6 pe-1">
+              <div class="form-group mb-2">
+                <label for="first-name-input" class="form-control-label">
+                  First Name
+                </label>
+                <input type="text" formControlName="firstName" id="first-name-input" class="form-control" />
+                <ng-container *ngIf="userForm?.controls?.firstName?.touched">
+                  <small class="text-danger" *ngIf="userForm?.controls?.firstName?.errors?.required">
+                    <i class="fa fa-exclamation-circle"></i> Please enter first name
+                  </small>
+                </ng-container>
+              </div>
+            </div>
+            <div class="col-6 ps-1">
+              <div class="form-group mb-2">
+                <label for="last-name-input" class="form-control-label">
+                  Last Name
+                </label>
+                <input type="text" formControlName="lastName" id="last-name-input" class="form-control" />
+                <ng-container *ngIf="userForm?.controls?.lastName?.touched">
+                  <small class="text-danger" *ngIf="userForm?.controls?.lastName?.errors?.required">
+                    <i class="fa fa-exclamation-circle"></i> Please enter last name
+                  </small>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <div class="form-group mb-2">
+            <label for="email-input" class="form-control-label"> Email </label>
+            <input type="email" formControlName="email" id="email-input" class="form-control" />
+            <ng-container *ngIf="userForm?.controls?.email?.touched">
+              <small class="text-danger" *ngIf="userForm?.controls?.email?.errors?.required">
+                <i class="fa fa-exclamation-circle"></i> Please enter an email
+              </small>
+              <small class="text-danger" *ngIf="userForm?.controls?.email?.errors?.pattern">
+                <i class="fa fa-exclamation-circle"></i> Please enter a valid email
+              </small>
+            </ng-container>
+          </div>
+          <div class="form-group mb-2">
+            <label for="business-name-input" class="form-control-label">
+              Business Function
+            </label>
+            <input type="text" formControlName="businessName" id="business-name-input" class="form-control" />
+            <ng-container *ngIf="userForm?.controls?.businessName?.touched">
+              <small class="text-danger" *ngIf="userForm?.controls?.businessName?.errors?.required">
+                <i class="fa fa-exclamation-circle"></i> Please enter business Function
+              </small>
+            </ng-container>
+          </div>
+          <div class="form-group mb-2">
+            <label for="access-input" class="form-control-label">
+              Access Type
+            </label>
+            <select name="access" id="access-input" class="form-control" formControlName="accessType">
+              <option value="read">Read</option>
+              <option value="write">Write</option>
+              <option value="read+write">Read/Write</option>
+            </select>
+            <ng-container *ngIf="userForm?.controls?.accessType?.touched">
+              <small class="text-danger" *ngIf="userForm?.controls?.accessType?.errors?.required">
+                <i class="fa fa-exclamation-circle"></i> Please select access type
+              </small>
+            </ng-container>
+          </div>
+          <div class="form-group mb-2">
+            <label for="functionality-input" class="form-control-label">
+              Functionality Access
+            </label>
+            <select name="functionality" id="functionality-input" class="form-control"
+              formControlName="functionalityAccess">
+              <option value="" disabled selected>Select Functionality</option>
+              <option value="cd">CD</option>
+              <option value="sl">SL</option>
+            </select>
+            <ng-container *ngIf="userForm?.controls?.functionalityAccess?.touched">
+              <small class="text-danger" *ngIf="userForm?.controls?.functionalityAccess?.errors?.required">
+                <i class="fa fa-exclamation-circle"></i> Please select functionality access
+              </small>
+            </ng-container>
+          </div>
+          <div class="d-flex justify-content-left">
+            <label class="form-control-label">Make Admin</label>
+            <div class="form-check form-switch mx-3 mb-0">
+              <input class="form-check-input" type="checkbox" formControlName="isAdmin" />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer" *ngIf="!viewMode">
+        <span *ngIf="selectedUser"><button type="submit" class="btn btn-primary"
+            (click)="onEditSaveSubmit()">Save</button></span>
+        <span *ngIf="!selectedUser"><button type="submit" class="btn btn-primary"
+            (click)="onSubmit()">Save</button></span>
+      </div>
+    </div>
+  </div>
+</div>

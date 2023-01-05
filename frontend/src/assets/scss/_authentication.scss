@@ -1,0 +1,123 @@
+@import "./variables.scss";
+
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  background-color: $app-primary-dark;
+  background-position: left;
+  background-size: auto;
+  align-items: center;
+  padding: 25px 0;
+
+  .left-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .logo {
+      animation: fadeIn 0.5s;
+      max-height: 350px;
+    }
+  }
+
+  .login-card {
+    background: #fff;
+
+    &-header {
+      padding: 25px 50px 0;
+      text-align: center;
+
+      .logo {
+        max-width: 18px;
+      }
+    }
+
+    &-body {
+      padding: 15px 45px;
+
+      .login-card-heading {
+        text-transform: uppercase;
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .login-form {
+        animation: fadeIn 0.5s;
+
+        .edit-control {
+          &:after {
+            content: unset !important;
+          }
+        }
+
+        .form-footer {
+          text-align: center;
+          margin-top: 1rem;
+        }
+      }
+    }
+
+    .logo {
+      max-width: 23px;
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 767px) {
+  .login-wrapper {
+    .left-panel {
+      .logo {
+        max-height: 150px;
+        width: unset;
+      }
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .login-wrapper {
+    .left-panel {
+      .logo {
+        max-width: 70%;
+        height: auto;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) and (min-width: 1200px) {
+  .login-wrapper {
+    .left-panel {
+      align-items: center;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .login-wrapper {
+    .login-card {
+      background: #fff;
+
+      &-body {
+        padding: 20px 60px;
+      }
+
+      .login-card-heading {
+        margin: 1.5rem 0;
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+.main{
+  padding: 5px 20px;
+}
+.header{
+  // background-color: rgb(65, 64, 64);
+  height: 39px;
+}
+.heder__label{
+  color: rgb(10, 10, 10);
+}
+.header_label__div{
+  display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.header__backButton{
+  border: none;
+  background: none;
+  color: rgb(10, 10, 10);
+
+}
+.container{
+  margin: 0;
+  padding: 0;
+}
+table, tr, th{
+  border: 1px solid #f8f6f6 !important;
+  border-collapse: collapse;
+}
+// table, th, td {
+//   border: 1px solid;
+// }
+.table__header{
+ background:  #767373;
+ color: #fff;
+}
+.even_row{
+  background: #e7e6e6;
+  color: black;
+}
+.odd_row{
+  background: #c4bfbf;
+  color: black;
+}
+
+.fixed-bottom{
+  bottom: 7px;
+  right: 0px;
+  left: initial;
+}

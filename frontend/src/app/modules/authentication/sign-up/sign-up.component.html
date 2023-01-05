@@ -1,0 +1,180 @@
+<div class="theme-main-container">
+  <div class="sign-up-wrapper">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-xl-7 col-lg-5 col-md-5 left-panel">
+          <img src="assets/images/logo-png.png" class="logo" alt="Unilever">
+          <!-- <p class="logo-text">Unilever</p> -->
+        </div>
+        <div class="col-xl-5 col-lg-5 col-md-6">
+          <div class="px-2 px-xl-4">
+            <div class="sign-up-card">
+              <div class="sign-up-card-header">
+                <h5>
+                  <img src="assets/images/company-logo.gif" class="logo" alt="">
+                  Unilever
+                </h5>
+                <p class="small">Welcome to Unilever</p>
+              </div>
+              <div class="sign-up-card-body">
+                <form class="sign-up-form" [formGroup]="signUpForm">
+                  <h4 class="sign-up-card-heading mb-0">Sign Up</h4>
+                  <p class="text-muted font-sm mb-4 text-center">
+                    <!-- <small>Enter registered email and password</small> -->
+                  </p>
+                  <div *ngIf="step === 1" formGroupName="step1" [@fadeIn]="{value: '', params: { duration: '300ms'}}">
+                    <div class="row">
+                      <div class="col-6 pe-1">
+                        <div class="form-group mb-2">
+                          <label for="first-name-input" class="form-control-label">
+                            First Name
+                          </label>
+                          <input type="text" formControlName="firstName" id="first-name-input" class="form-control">
+                          <ng-container *ngIf="signUpForm?.controls?.step1?.controls?.firstName?.touched">
+                            <small class="text-danger"
+                              *ngIf="signUpForm?.controls?.step1?.controls?.firstName?.errors?.required">
+                              <i class="fa fa-exclamation-circle"></i> Please enter first name
+                            </small>
+                          </ng-container>
+                        </div>
+                      </div>
+                      <div class="col-6 ps-1">
+                        <div class="form-group mb-2">
+                          <label for="first-name-input" class="form-control-label">
+                            Last Name
+                          </label>
+                          <input type="text" formControlName="lastName" id="last-name-input" class="form-control">
+                          <ng-container *ngIf="signUpForm?.controls?.step1?.controls?.lastName?.touched">
+                            <small class="text-danger"
+                              *ngIf="signUpForm?.controls?.step1?.controls?.lastName?.errors?.required">
+                              <i class="fa fa-exclamation-circle"></i> Please enter last name
+                            </small>
+                          </ng-container>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group mb-2">
+                      <label for="email-input" class="form-control-label">
+                        Email
+                      </label>
+                      <input type="email" formControlName="email" id="email-input" class="form-control">
+                      <ng-container *ngIf="signUpForm?.controls?.step1?.controls?.email?.touched">
+                        <small class="text-danger"
+                          *ngIf="signUpForm?.controls?.step1?.controls?.email?.errors?.required">
+                          <i class="fa fa-exclamation-circle"></i> Please enter an email
+                        </small>
+                        <small class="text-danger"
+                          *ngIf="signUpForm?.controls?.step1?.controls?.email?.errors?.pattern">
+                          <i class="fa fa-exclamation-circle"></i> Please enter a valid email
+                        </small>
+                      </ng-container>
+                    </div>
+                    <div class="form-group mb-2">
+                      <label for="password-input" class="form-control-label">
+                        Password
+                      </label>
+                      <input type="password" formControlName="password" id="password-input" class="form-control">
+                      <ng-container *ngIf="signUpForm?.controls?.step1?.controls?.password?.touched">
+                        <small class="text-danger"
+                          *ngIf="signUpForm?.controls?.step1?.controls?.password?.errors?.required">
+                          <i class="fa fa-exclamation-circle"></i> Please enter a password
+                        </small>
+                        <small class="text-danger"
+                          *ngIf="signUpForm?.controls?.step1?.controls?.password?.errors?.minlength">
+                          <i class="fa fa-exclamation-circle"></i> Password must contain at least six characters
+                        </small>
+                      </ng-container>
+                    </div>
+                    <div class="form-group mb-2">
+                      <label for="confirm-password-input" class="form-control-label">
+                        Confirm Password
+                      </label>
+                      <input type="password" formControlName="confirmPassword" id="confirm-password-input"
+                        class="form-control">
+                      <ng-container *ngIf="signUpForm?.controls?.step1?.controls?.confirmPassword?.touched">
+                        <small class="text-danger"
+                          *ngIf="signUpForm?.controls?.step1?.controls?.confirmPassword?.errors?.required">
+                          <i class="fa fa-exclamation-circle"></i> Please enter confirm password
+                        </small>
+                        <small class="text-danger" *ngIf="signUpForm?.controls?.step1.errors?.invalidConfirmPassword">
+                          <i class="fa fa-exclamation-circle"></i> Confirm password and password must match
+                        </small>
+                      </ng-container>
+                    </div>
+                  </div>
+                  <div *ngIf="step === 2" formGroupName="step2" [@fadeIn]="{value: '', params: { duration: '300ms'}}">
+                    <div class="form-group mb-2">
+                      <label for="business-name-input" class="form-control-label">
+                        Business Function
+                      </label>
+                      <input type="text" formControlName="businessName" id="business-name-input" class="form-control">
+                      <ng-container *ngIf="signUpForm?.controls?.step2?.controls?.businessName?.touched">
+                        <small class="text-danger"
+                          *ngIf="signUpForm?.controls?.step2?.controls?.businessName?.errors?.required">
+                          <i class="fa fa-exclamation-circle"></i> Please enter business Function
+                        </small>
+                      </ng-container>
+                    </div>
+                    <div class="form-group mb-2">
+                      <label for="access-input" class="form-control-label">
+                        Access Type
+                      </label>
+                      <select name="access" formControlName="accessType" id="access-input" class="form-control">
+                        <option value="read">Read</option>
+                        <option value="write">Write</option>
+                        <option value="read+write">Read/Write</option>
+                      </select>
+                      <ng-container *ngIf="signUpForm?.controls?.step2?.controls?.accessType?.touched">
+                        <small class="text-danger"
+                          *ngIf="signUpForm?.controls?.step2?.controls?.accessType?.errors?.required">
+                          <i class="fa fa-exclamation-circle"></i> Please select access type
+                        </small>
+                      </ng-container>
+                    </div>
+                    <div class="form-group mb-2">
+                      <label for="functionality-input" class="form-control-label">
+                        Functionality Access
+                      </label>
+                      <select name="functionality" formControlName="functionalityAccess" id="functionality-input"
+                        class="form-control">
+                        <option value="" disabled selected>Select Functionality</option>
+                        <option value="cd" selected>CD</option>
+                        <option value="sl">SL</option>
+                      </select>
+                      <ng-container *ngIf="signUpForm?.controls?.step2?.controls?.functionalityAccess?.touched">
+                        <small class="text-danger"
+                          *ngIf="signUpForm?.controls?.step2?.controls?.functionalityAccess?.errors?.required">
+                          <i class="fa fa-exclamation-circle"></i> Please select functionality access
+                        </small>
+                      </ng-container>
+                    </div>
+                  </div>
+                  <div class="form-footer">
+                    <div class="d-flex justify-content-center">
+                      <button [@fadeIn]="{value: '', params: { duration: '300ms'}}" class="btn btn-secondary"
+                        type="submit" *ngIf="step === 1" (click)="next()"
+                        [disabled]="signUpForm?.get('step1')?.invalid">
+                        Next <i class="fa fa-angle-right"></i>
+                      </button>
+                      <button [@fadeIn]="{value: '', params: { duration: '300ms'}}" class="btn btn-secondary me-2"
+                        type="submit" *ngIf="step === 2" (click)="back()">
+                        <i class="fa fa-angle-left"></i> Back
+                      </button>
+                      <button [@fadeIn]="{value: '', params: { duration: '300ms'}}" class="btn btn-secondary"
+                        type="submit" *ngIf="step === 2" (click)="signUp()"
+                        [disabled]="signUpForm?.get('step2')?.invalid">
+                        Sign Up
+                      </button>
+                    </div>
+                    <p class="mt-3">Already have an account? <a role="button" routerLink="/auth/login"
+                        class="text-decoration-none">Login</a></p>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

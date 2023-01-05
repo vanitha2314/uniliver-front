@@ -1,0 +1,80 @@
+ <div class="tree-view" *ngFor="let node of tree;let i=index;">
+  <div *ngIf="node?.nodeType == 'file'">
+    <input type="radio" name="source-file" id="file-1" [value]="node?.node" class="form-check-input ms-1" [attr.id]="'file-' + node?.node"
+      (click)="onSelect(node?.node)" [(ngModel)]="selectedFile">
+    <label [attr.for]="'file-' + node?.node">
+      <i class="fa fa-file-alt"></i>
+    
+      {{node?.node}}
+    </label>
+    <label class="icon" *ngIf="selectedFile === node?.node">
+      <i class="fa fa-download" data-toggle="tooltip" title="Download"(click)="downloadFile()"></i>
+      <ng-container>
+        <i class ="fa fa-share"  data-toggle="tooltip" title="Share" (click)="onShare(pivot)" ></i>
+        <i class ="fa fa-trash"  data-toggle="tooltip" title="Delete" (click)="deleteFile(i)"></i>
+      </ng-container>
+    </label>
+  </div>
+  <div class="node-label" (click)="node.expand=!node.expand" *ngIf="node?.nodeType == 'folder' || node?.nodeType ==  'container'">
+    <i class="fa fa-folder"></i> {{node?.node}}
+  </div>
+  <div class="sub-section" [class.hide-section]="!node.expand">
+    <app-tree-view [tree]="node?.children" (selectFile)="handleSelection($event,node)">
+    </app-tree-view>
+  </div>
+  <hr *ngIf="i < tree.length-1 && node?.nodeType === 'container'" />
+</div>
+<div #shareModalRef class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="exampleModalLabel">Share Report</h5>
+      <span type="button" class="close" (click)="shareModal.hide()" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true"><i class="fa fa-times"></i></span>
+      </span>
+    </div>
+    <div class="modal-body">
+      <form class="sign-up-form" [formGroup]="shareForm">
+        <div class="row">
+          <div class="col-12">
+            <div class="form-group mb-2">
+              <label for="first-name-input" class="form-control-label">
+                Select User
+              </label>
+
+              <ng-select [items]="users" [multiple]="true" bindLabel="firstName" bindValue="firstName"
+                formControlName="users" placeholder="Select Users">
+                <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                  <span class="ng-value-label">
+                    {{item?.firstName}} {{item?.lastName}}
+                  </span>
+                  <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                </ng-template>
+
+                <ng-template ng-option-tmp let-item="item">
+                  <div>{{item?.firstName}} {{item?.lastName}}</div>
+                  <div>{{item?.email}}</div>
+                </ng-template>
+              </ng-select>
+            </div>
+          </div>
+          <ng-container *ngIf="shareForm?.controls?.users?.touched">
+            <small class="text-danger" *ngIf="shareForm?.controls?.users?.errors?.required">
+              <i class="fa fa-exclamation-circle"></i> Please select at lease one user
+            </small>
+            <small class="text-danger" *ngIf="shareForm?.controls?.users?.errors?.maxLength">
+              <i class="fa fa-exclamation-circle"></i> Please select at lease one user
+            </small>
+          </ng-container>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-primary" [disabled] = "!this.shareForm.valid" data-bs-dismiss="modal" (click)="sharePivotFile()">Share</button>
+    </div>
+  </div>
+</div>
+</div>
+

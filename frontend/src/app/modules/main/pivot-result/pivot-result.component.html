@@ -1,0 +1,95 @@
+<div   class="main d-flex flex-column min-vh-86">
+  <div class="header">
+  <div class="container">
+    <div class="row">
+      <div class="col-1">
+        <button (click)="back()" type="button" class="btn btn-dark header__backButton">Back</button>
+      </div>
+     <div  class="col header_label__div">
+         <label class="heder__label"> {{data.name}}</label>
+      </div>
+    </div>
+  
+  </div>
+  
+  
+  
+  </div>
+  <div class="table-responsive  ng-tns-c116-3" *ngIf="column_name?.length > 0">
+  
+  <table class="table">
+    <thead>
+      <tr class="table__header">
+        <!-- <th class="table-column_name border border-white"> Sl. No </th> -->
+        <th class="table-column_name border border-white" *ngFor="let column of  column_name "> {{column}}</th>
+      </tr>
+    </thead>
+  <tbody>
+    <tr *ngFor="let  value of rowdata; let i = index" [ngClass]=" i%2 === 1 ? 'odd_row' : 'even_row' ">
+      <th *ngFor="let v of getvalue(value)">
+        {{v}}
+      </th>
+    </tr>
+  </tbody>
+  
+  </table>
+  
+  </div>
+  
+  
+ <!-- pagination -->
+      <footer class="page-footer font-small fixed-bottom">
+        <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-end px-3 pagination-lg">
+       
+        <li class="page-item" [ngClass]="currentPage  === 0 ? 'disabled' : ''" (click)="
+            currentPage  > 0 &&
+              onSelectPage(currentPage - 1)
+          ">
+  
+          <a class="page-link" role="button" tabindex="-1" aria-disabled="true">
+            <i class="fa fa-chevron-left"></i></a>
+        </li>
+  
+        <li class="page-item" >
+          <a class="page-link" role="button" >{{
+          currentPage +1
+            }}</a>
+        </li>
+     
+       <li class="page-item" [ngClass]="
+            (currentPage + 1) === totalPage ? 'disabled' : ''
+          " (click)="
+            currentPage + 1 < totalPage &&
+              onSelectPage(currentPage + 1)
+          ">
+          <a class="page-link" role="button"><i class="fa fa-chevron-right"></i></a>
+         
+        </li>
+      </ul>
+    </nav>
+  </footer>
+  <!-- </div>  -->
+  
+  
+  
+  <!-- <footer class="page-footer font-small fixed-bottom">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <li class="page-item ">
+          <a class="page-link" href="#" tabindex="-1" >Previous</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+          <a class="page-link" href="#">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </footer> -->
+  
+  </div>
+  
+  
+  

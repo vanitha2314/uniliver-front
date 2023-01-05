@@ -1,0 +1,200 @@
+<div class="mypivot">
+  <div class="header main">
+    <div  class=" header__name">
+      My Pivot Request Table
+    </div>
+    <div class="header__refresh "> 
+      <span  (click)="getPivotRequestData()">Refresh
+        <i class="fa fa-refresh" aria-hidden="true"></i>
+      </span>
+    </div>
+ </div>
+  
+  <div class="main table-responsive ng-tns-c116-3">
+    <table class="table">
+
+      <thead>
+        <tr class="table_header">
+          <th class=" table__label" scope="col">#</th>
+          <th class="table_name table__label" scope="col ">Table Name</th>
+          <th class="table__label" scope="col">Status</th>
+          <th scope="col" class=" table__label">Schedule </th>
+        </tr>
+      </thead>
+  
+      <tbody>
+        <tr *ngFor="let pivot of data;let i = index" [ngClass]="i%2 === 1 ? 'table_even': 'table_odd'" mat-raised  >
+          <th class="data_label" scope="row">{{i+1}}</th>
+          <td class="data_label" (click)="showPivotResult(pivot)"  >{{pivot.pivotTableName}}</td>
+        
+          <td class="data_label">
+            <span [ngClass]="pivot.status === 'started' ? 'backyellow' : pivot.status === 'Completed' ? 'backgreen' : 'backred'"></span>
+            <span  > {{pivot.status}}</span> </td>
+          <th class="data_label" [ngClass]="pivot.status !== 'Completed'  ? 'cursurestrict' : 'cursorPointer'"> 
+            <button [disabled]="pivot.status !== 'Completed'" class="btn btn-sm btn-primary me-1" data-toggle="tooltip" title="Schedule" (click)="refreshment(pivot)">
+            <i class="fa fa-calendar-check" ></i></button> </th>
+
+            <!-- <button type="button" (click)="showPivotResult(pivot)" class="btn btn-primary  clickbtn buttons"> click here to see the status  </button> -->
+            <!-- <button type="button" (click)="deleteTable(pivot.id);" class="btn btn-primary buttons"> Delete </button> -->
+  
+        </tr>
+       </tbody>
+      </table>
+  
+  <!-- <div class="card main-card">
+    <div class="card-body main-card-body">
+      <span class="main-card-body__label_span"> Table Name</span>
+      <span  class="main-card-body__label_span">Status</span>
+    </div>
+  </div>
+    <div class="card main-card" *ngFor="let pivot of data;let i = index">
+      <div class="card-body main-card-body">
+        <label class="main-card-body__label">
+          {{i+1}} {{pivot.table_name}}</label>
+        <label class="main-card-body__label" [ngClass]="pivot.status === 'in-progress' ? 'backyellow' : pivot.status === 'completed' ? 'backgreen' : 'backred'">
+           {{pivot.status}} </label>
+      </div>
+    </div> -->
+  
+  </div>
+  
+  <div #statusPopUp class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">  Pivot  status</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div id ="modal_body" class="modal-body">
+  
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Okay</button>
+  
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div #refreshModalRef class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Refreshment Details</h5>
+        <span type="button" class="close" (click)="refrshModal.hide()" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fa fa-times"></i></span>
+        </span>
+      </div>
+      <div class="modal-body">
+        <form class="form-group" [formGroup]="dataForm">
+          <div class="row">
+            <div class="col-12">
+              <div class="form-group">
+                <h5>
+                  Refreshment Type
+                </h5>
+                <div class="m-1">
+                  <ng-select name="refreshment" id="refreshmentType" formControlName="refreshmentType">
+                    <ng-option value="" selected disabled>Choose Type</ng-option>
+                    <ng-option [value]="'Daily'" >Daily</ng-option>
+                    <ng-option [value]="'Weekly'">Weekly</ng-option>
+                    <ng-option [value]="'Monthly'">Monthly</ng-option>
+                  </ng-select>
+                </div>
+                <div class="input-group-md mt-3 row">
+                  <div *ngIf="dataForm?.controls?.refreshmentType?.value === 'Monthly'" class="input-group-md row" >
+                    <h6>Select Date And Time</h6>
+                    <div class="col-md-6">
+                      <input type="date" class="form-control input-lg" formControlName="date">
+                    </div>
+                    <div class="col-md-3">
+                      <select class="createFormSelect-text ml-2 form-control input-lg" formControlName="time">
+                        <option hidden value="" selected disabled>Select time</option>
+                        <option *ngFor="let last of lasts">
+                          {{last}}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">    
+                      <select class="createFormSelect-text ml-2 form-control input-lg" formControlName="median">
+                        <option hidden value="" disabled selected>Select meridian</option>
+                        <option value="AM" selected >AM</option>
+                        <option value="PM">PM</option>
+                      </select>
+                    </div>
+                    
+                  </div>
+                  <div *ngIf="dataForm?.controls?.refreshmentType?.value === 'Weekly'" class="input-group-md row">
+                    <h6>Select Day And Time</h6>
+                    <div class="col-md-6">
+                      <select class="createFormSelect-text ml-2 form-control input-lg" formControlName="day">
+                         <option hidden value="" disabled selected>Select day</option>
+                        <option *ngFor="let day of days">
+                          {{day}}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">
+                      <!-- <input type="time" class="form-control" step="3600" placeholder="select Time" formControlName="time"> -->
+                      <select class="createFormSelect-text ml-2 form-control input-lg" formControlName="time">
+                         <option hidden value="" disabled selected>Select time</option>
+                        <option *ngFor="let last of lasts">
+                          {{last}} 
+                        </option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">
+                      <!-- <input type="time" class="form-control" step="3600" placeholder="select Time" formControlName="time"> -->
+                      <select class="createFormSelect-text ml-2 form-control input-lg" formControlName="median">
+                        <option hidden value="" disabled selected>Select meridian</option>
+                        <option value="AM" selected >AM</option>
+                        <option value="PM">PM</option>
+                      </select>
+                    </div>
+                    
+                  </div>
+                  <div *ngIf="dataForm?.controls?.refreshmentType?.value === 'Daily'"  class="input-group-md"> 
+                    <h6>Select Time</h6>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <!-- <input type="time" class="form-control" step="3600" placeholder="select Time" formControlName="time"> -->
+                        <select class="createFormSelect-text ml-2 form-control input-lg" formControlName="time">
+                          <option hidden value="" disabled selected>Select time</option>
+                          <option *ngFor="let last of lasts">
+                            {{last}}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="col-md-6">
+                        <!-- <input type="time" class="form-control" step="3600" placeholder="select Time" formControlName="time"> -->
+                        <select class="createFormSelect-text ml-2 form-control input-lg" formControlName="median" [attr.selected]="index == 1 ? true : null" >
+                          <option hidden value="" disabled selected>Select meridian</option>
+                          <option value="AM" selected >AM</option>
+                          <option value="PM">PM</option>
+                        </select>
+                      </div>
+
+                    </div>
+                 
+                  </div>
+                </div>
+   
+              <!-- <span class="ng-value-icon right" aria-hidden="true">×</span> -->       
+              </div>
+            </div>
+          </div>
+        </form>
+         <label class="mandator" *ngIf="submitButton"> select required details</label>
+      </div>
+      <div class="modal-footer">
+       
+        <button type="submit" class="btn btn-primary me-2"  (click)="onSchdule()">Submit</button>
+       
+ 
+        <!-- <button type="submit" class="btn btn-primary" (click)="onShareSubmit()">Share</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+  

@@ -1,0 +1,914 @@
+
+<div class="row" [formGroup]="dataForm">
+  <div class="col-12 mb-3">
+    <div class="card shadow mb-3">
+      <div class="card-body">
+        <div class="query-editor-container mb-2">
+          <div class="row">
+            <!-- SELECT BUSINESS FUNCTION-->
+            <div class="col-3">
+              <div class="details-header">
+                <div class="details-header-text">Business Function</div>
+              </div>
+              <div class="mb-3">
+                <div *ngIf="
+                    businessFunction.roles[0] === 'NA_UPI_D&A_All_Users';
+                    else elseBlock
+                  ">
+                  <ng-select id="input-schema" formControlName="businessFunction">
+                    <ng-option value="" select disabled>
+                      Choose Business Function
+                    </ng-option>
+                    <ng-option value="CD">CD</ng-option>
+                    <ng-option value="SupplyChain">Supply Chain</ng-option>
+                  </ng-select>
+                </div>
+                <ng-template #elseBlock>
+                  <p style="
+                      border: 1px solid #158fb4;
+                      height: 35px;
+                      border-radius: 4px;
+                      padding-left: 5px;
+                      padding-top: 5px;
+                    ">
+                    {{ role }}
+                  </p>
+                </ng-template>
+              </div>
+            </div>
+            <!-- SELECT DATA SOURCE -->
+            <div class="col-3">
+              <div class="details-header">
+                <div class="details-header-text">Data Source</div>
+              </div>
+              <!-- <div class="mb-3"> -->
+              <!-- <div class="details-header">
+                  <div class="details-header-text">Data Source</div>
+                </div> -->
+              <div class="mb-3" >
+                <ng-select id="input-schema" formControlName="source" (change)="selectSource($event)">
+                  <ng-option value="" selected disabled>Choose Source</ng-option>
+                  <ng-option [value]="s.dataSourceName" *ngFor="let s of sources">
+                    <span *ngIf="s.dataSourceName === 'SQL Server'"><img src="../../../../assets/images/Sql.png"
+                        height="20px" width="20px" />
+                    </span>
+                    <span *ngIf="s.dataSourceName === 'Data Lake'"><img src="../../../../assets/images/container.png"
+                        height="18px" width="18px" /></span>
+                    <span *ngIf="s.dataSourceName === 'Upload File'"><img src="../../../../assets/images/upload.png"
+                        height="20px" width="20px" /></span>
+                    {{ s.dataSourceName }}
+                  </ng-option>
+                </ng-select>
+                <!-- <ng-select id="input-schema" formControlName="source" (change)="selectSource()">
+                  <ng-option value="" selected disabled>Choose Source</ng-option>
+                  <ng-option [value]="'sql'"><span><img src="../../../../assets/images/Sql.png" height="20px"
+                        width="20px" /></span>
+                    &nbsp; SQL Server</ng-option>
+                  <ng-option [value]="'adls'"><span><img src="../../../../assets/images/container.png" height="18px"
+                        width="18px" /></span>&nbsp; &nbsp; Data Lake</ng-option>
+                  <ng-option [value]="'uploadFile'"><span><img src="../../../../assets/images/upload.png" height="20px"
+                        width="20px" /></span>
+                    &nbsp; Upload File</ng-option>
+                </ng-select> -->
+                <!-- </div> -->
+              </div>
+            </div>
+            <!-- SELECT SCHEMA -->
+            <div class="col-3" *ngIf="dataForm?.controls?.source?.value === 'SQL Server'">
+              <div class="details-header">
+                <div class="details-header-text">Schema</div>
+              </div>
+              <div class="mb-3" *ngIf="dataForm?.controls?.source?.value === 'SQL Server'">
+                <ng-select id="input-schema" formControlName="selectedSchema" (change)="selectSchema($event)">
+                  <ng-option value="" selected disabled>Choose Schema</ng-option>
+                  <ng-option [value]="schema" *ngFor="let schema of tableList?.schemas">
+                    {{ schema }}
+                  </ng-option>
+                </ng-select>
+              </div>
+            </div>
+       <!-- for predefined and custom query -->
+            <div class="col-3 mb-3" *ngIf="dataForm?.controls?.source?.value === 'SQL Server'">
+              <div class="details-header">
+                <div class="details-header-text" *ngIf="
+                    tableList?.mapping &&
+                    dataForm.controls?.selectedSchema?.value &&
+                    selectedMode != 'custom'
+                  ">
+                  Tables
+                </div>
+              </div>
+              <!-- <div class="tree-wrapper">
+                <app-table-tree (select)="handleColumnSelection($event)"
+                  [schemaObject]="tableList?.data && dataForm.controls?.selectedSchema?.value && tableList.data[dataForm.controls?.selectedSchema?.value]">
+                </app-table-tree>
+              </div> -->
+              <ng-container *ngIf="
+                  tableList?.mapping &&
+                  dataForm.controls?.selectedSchema?.value &&
+                  selectedMode != 'custom'
+                ">
+                <select id="input-schema" class="form-control" formControlName="selectedTable"
+                  (change)="onSelectTable($event.target.value)">
+                  <option value="" selected disabled>Select Table</option>
+                  <option *ngIf="!tableList?.mapping">
+                    <span class="fst-italic">No Records Found</span>
+                  </option>
+                  <ng-container *ngIf="
+                      dataForm.controls?.selectedSchema?.value &&
+                      selectedMode != 'custom'
+                    ">
+                           <!-- Select Tables -->
+                    <ng-container *ngFor="let table of tableList?.tables; let i = index" data-toggle="modal"
+                      data-target="#columnModalExample">
+                      <option name="tables" [id]="'table-' + i" [for]="'table-' + i" [value]="table">
+                        {{ table }}
+                      </option>
+                    </ng-container>
+                  </ng-container>
+                </select>
+              </ng-container>
+              <div class="col-6 mt-3" *ngIf="dataForm?.controls?.source?.value === 'SQL Server'">
+                <div class="details-header">
+                  <div class="details-header-text" *ngIf="
+                      tableList?.mapping &&
+                      dataForm.controls?.selectedSchema?.value &&
+                      selectedTable?.value &&
+                      selectedMode != 'custom'
+                    ">
+                    Select Columns
+                  </div>
+                </div>
+                <ng-container *ngIf="
+                    tableList?.mapping &&
+                    dataForm.controls?.selectedSchema?.value &&
+                    selectedMode != 'custom'
+                  ">
+                  <!-- <select id="input-schema" class="form-control" formControlName="selectedColumn"
+                    (change)="onSelectColumn(table)">
+                    <option value="" selected disabled>Select Column</option>
+                    <option *ngIf="!tableList?.mapping">
+                      <span class="fst-italic">No Records Found</span>
+                    </option>
+                    <ng-container *ngIf="dataForm.controls?.selectedSchema?.value && selectedMode != ('custom')">
+                      <ng-container *ngFor="let table of selectedTable; let i = index">
+                        <option name="tables" [id]="'table-'+i" [for]="'table-'+i">{{table}}</option>
+                      </ng-container>
+                    </ng-container>
+                  </select> -->
+
+                  <!-- select columns  -->
+                  <div #columnModalRef class="modal fade" id="columnModalExample" tabindex="-1"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                      <div class="modal-content scrollbox">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">
+                            Select Columns
+                          </h5>
+                          <span type="button" class="close" (click)="columnModal.hide()" data-dismiss="modal"
+                            aria-label="Close">
+                            <span aria-hidden="true"><i class="fa fa-times"></i></span>
+                          </span>
+                        </div>
+                        <div class="modal-body modalBody">
+                          <form class="column-form" [formGroup]="dataForm">
+                              <input type="search" class = "columnSearch" (keyup)="searchColumn(myInput.value)" (search)="searchColumn()"   placeholder="Search Column's" #myInput/>{{ myInput.focus() }}
+                            <div class="row">
+                            
+                              <div class="col-12" id="scrollbox">
+                                <div class="form-group mb-2 input-group-lg" *ngFor="let column of columnSearch">
+                                  <input type="checkbox" [(ngModel)]="column.isChecked" class="form-check-input mx-2"
+                                    name="column.name" (click)="onColumnchange($event, column)" formControlName="selectedColumns" />
+
+                                  <label>
+                                    {{ column.name }}
+                                  </label>
+                                  <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                                    <span class="ng-value-icon right input-group-lg" (click)="clear(item)"
+                                      aria-hidden="true">×</span>
+                                  </ng-template>
+                                </div>
+                                <label *ngIf="columnSearch.length == 0"> No Search Data</label>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="submit" class="btn btn-primary" (click)="onQuerySubmit()"
+                            data-bs-dismiss="modal">
+                            Submit
+                          </button>
+                          <button type="reset" class="btn btn-danger" (click)="resetColumn()">
+                            Close
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+
+              <ng-container *ngIf="
+                  dataForm.controls?.selectedSchema?.value &&
+                  tableList.mapping[dataForm.controls?.selectedSchema?.value]
+                    ?.length &&
+                  selectedMode == 'custom'
+                ">
+                <div class="table-responsive">
+                  <table class="table" style="max-height: 25vh !important">
+                    <thead class="header">
+                      <tr>
+                        <th>Tables</th>
+                      </tr>
+                    </thead>
+                    <tr *ngFor="
+                        let table of tableList.mapping[
+                          dataForm.controls?.selectedSchema?.value
+                        ]
+                      ">
+                      <tbody>
+                        {{
+                        table
+                        }}
+                      </tbody>
+                    </tr>
+                  </table>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+          <!-- QUERY Mode -->
+          <div class="d-flex">
+            <div class="d-flex" *ngIf="dataForm?.controls?.source?.value === 'SQL Server'">
+              <!-- Predefined Query -->
+              <div class="form-check me-3">
+                <input class="form-check-input" type="radio" formControlName="queryMode" id="query-mode-default"
+                  value="default" (change)="onQueryMode('default')" />
+                <label class="form-check-label" for="query-mode-default">
+                  Predefined Query
+                </label>
+              </div>
+              <!-- CUSTOM QUERY-->
+              <div class="form-check me-2">
+                <input class="form-check-input" type="radio" formControlName="queryMode" id="query-mode-custom"
+                  value="custom" (change)="onQueryMode('custom')" />
+                <label class="form-check-label" for="query-mode-custom">
+                  Custom Query
+                </label>
+              </div>
+              <!-- MODIFY QUERY -->
+              <div class="form-check me-2">
+                <input class="form-check-input" type="radio" formControlName="queryMode"   id="query-mode-modify"  [attr.disabled] = "disableModifiedQuery ? '' : null"
+                (click)="onQueryMode('modify',$event.target.value)" />
+                <label class="form-check-label" for="query-mode-modify">
+                  Modify Query
+                </label>
+              </div>
+            </div>
+          </div>
+          <!-- SQL EDITOR -->
+          <div class="query-editor mt-2" *ngIf="dataForm?.controls?.source?.value === 'SQL Server'">
+            <div class="page-header">
+              <div class="header-left">
+                <div class="header-text editor__width">
+                  <div class="page-container app-ace-editor" id="editor" #editor formControlName="sqlQuery"
+                    ngDefaultControl></div>
+                  <!-- <textarea class="form-control mb-2" placeholder="Enter SQL Query" rows="3" id="queryKeyword"
+              formControlName="sqlQuery"></textarea> -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-end" *ngIf="dataForm?.controls?.source?.value === 'SQL Server'">
+            <!-- <button class="btn btn-sm btn-primary me-2" [disabled]="dataForm?.invalid" data-toggle="modal" -->
+            <button class="btn btn-sm btn-primary me-2" [disabled]="dataform.sqlQuery.value === '' || dataform.sqlQuery.value === undefined" data-toggle="modal"
+            data-target="#exampleModalCenter" (click)="onSaveQuery()">
+              Save Query
+            </button>
+            <button class="btn btn-sm btn-primary" [disabled]="dataform.sqlQuery.value === '' || dataform.sqlQuery.value === undefined"(click)="getData()">
+              Preview
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- For Upload File Source -->
+    <div class="card shadow mb-3" *ngIf="dataForm?.controls?.source?.value === 'Upload File'">
+      <div class="page-header card-body">
+        <div class="details-header m-3">
+          <!-- <button class="btn btn-lg-btn btn-primary btn-sm h-100 m-2" (click) ="itemSelector()" > Local
+          </button> -->
+          <img src="assets/images/download1.jpeg" alt="image" height="50px" (click)="itemSelector()" />
+        </div>
+        <!-- <div data-toggle="modal" data-target="#exampleModalCenter" class="m-3">
+          <!-- <button class="btn btn-lg-btn btn-info btn-sm h-100 m-2" data-toggle="modal"
+          data-target="#exampleModalCenter" (click)="onSharePoint()">
+            Sharepoint
+          </button> -->
+        <!-- <img src="assets/images/download.png" alt="image" height="50px" (click)="onSharePoint()" />
+        </div> -->
+      </div>
+      <div>
+        <div>
+          <div class="page-header card-body row" *ngIf="isShown">
+            <div class="col-12 col-sm-auto mb-2 input-group-md">
+              <input class="form-control input-lg" type="file" name="file-input" id="file-input"
+                formControlName="fileInput" (change)="onFileSelected($event)" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+              <div class="input-error-alert" *ngIf="
+                  isFileUploaded &&
+                  fileInput.invalid &&
+                  (fileInput.dirty || fileInput.touched)
+                ">
+                <div *ngIf="fileInput?.controls?.file.errors?.required">
+                  Please upload file.
+                </div>
+                <div *ngIf="fileInput?.errors?.invalidFile">
+                  Please upload Excel file Or csv file
+                </div>
+              </div>
+            </div>
+
+            <!-- <div class="col-12 col-sm-auto mb-2 input-group-md">
+          <select class="form-control" name="" id="">
+            <option value="" selected disabled>Select Data Source</option>
+            <option value="pie">Share Point</option>
+            <option value="pie">ADSL</option>
+            <option value="pie">SQL Server</option>
+          </select>
+        </div> -->
+            <div class="col-12 col-sm-auto mb-2 text-end input-group-md">
+              <button class="btn btn-lg-btn btn-primary btn-sm h-100" [disabled]="uploadedFile === undefined || uploadedFile === null " (click)="onUploadFile()">
+                Upload
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div #sharePointRef class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">
+              Please Provide Your SharePoint Link
+            </h5>
+            <span type="button" class="close" (click)="sharePointModal.hide()" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </span>
+          </div>
+          <div class="modal-body">
+            <form class="sign-up-form" [formGroup]="sharePointForm">
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-group mb-2 input-group-lg">
+                    <input class="form-control input-lg" type="url" formControlName="sharePoint"
+                      placeholder="https://example.com" pattern="https://.*" size="30" required />
+
+                    <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                      <span class="ng-value-icon right input-group-lg" (click)="clear(item)" aria-hidden="true">×</span>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" (click)="onUrlSubmit()" data-bs-dismiss="modal">
+              Submit
+            </button>
+            <button type="reset" class="btn btn-danger">Close</button>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+   <!-- Modal For Save The Query -->
+    <div #shareModalRef class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Save the Query</h5>
+            <span type="button" class="close" (click)="shareModal.hide()" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </span>
+          </div>
+          <div class="modal-body">
+            <form class="sign-up-form" [formGroup]="shareForm">
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-group mb-2 input-group-lg">
+                    <input class="form-control input-lg" type="text" formControlName="name" placeholder="Name the Query"
+                      [(ngModel)]="text" />
+                    <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                      <span class="ng-value-icon right input-group-lg" (click)="clear(item)" aria-hidden="true">×</span>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" (click)="onNameSubmit()" data-bs-dismiss="modal">
+              Submit
+            </button>
+            <button type="reset" class="btn btn-danger" (click)="shareModal.hide()">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- For Data Lake Source -->
+    <div class="card shadow mb-3" *ngIf="dataForm?.controls?.source?.value === 'Data Lake'">
+      <div class="card-body">
+        <div class="details-header">
+          <div class="details-header-text">Choose File</div>
+        </div>
+        <div class="tree-wrapper">
+          <app-tree-view [tree]="tree" (selectFile)="handleSelectFile($event)" id="scrollToPivotFiles"></app-tree-view>
+        </div>
+        <!-- <hr style="width: 100%; text-align: left; margin-left: 0" /> -->
+        <div class="text-end">
+          <!-- <button class="btn btn-sm btn-primary m-2" (click)="downloadFile()">
+            Download File
+          </button> -->
+          <button class="btn btn-sm btn-primary" [disabled]="fileSubmit"  (click)="getData()">
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- For Pivot Creation Modal -->
+    <div #pivotModalRef class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Pivot Table</h5>
+            <span type="button" class="close" (click)="pivotModal.hide()" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </span>
+          </div>
+          <div class="modal-body">
+            <form class="sign-up-form" [formGroup]="pivotForm">
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-group mb-2 input-group-lg">
+                    <div class="mb-3">
+                      <div class="form-group mt-1" (click)="onPivotTypeChange($event)">
+                        <label class="form-control-label mt-1">Select Rows <span class="error-message"> * </span></label>
+                        <ng-select formControlName="rowData" bindLabel="col" bindValue="col" [multiple]="true"
+                          (change)="rowValueChange($event)">
+                          <ng-option [value]="col.col" *ngFor="let col of pivotData.row">
+                            {{ col.col }}
+                          </ng-option>
+                        </ng-select>
+                        <div class="error-message" *ngIf="fc.rowData.errors?.required && pivotSubmitted">Please select row </div>
+
+                        <label class="form-control-label mt-1">Select Columns <span class="error-message"> * </span></label>
+                        <ng-select formControlName="colData" bindLabel="col" bindValue="col" [multiple]="true">
+                          <ng-option [value]="col.col" *ngFor="let col of pivotData.column">
+                            {{ col.col }}
+                          </ng-option>
+                        </ng-select>
+                        <div class="error-message" *ngIf="fc.colData.errors?.required && pivotSubmitted">Please select columns </div>
+
+
+                        <label class="form-control-label mt-1">Aggregation Dimensions (Σ Values) <span class="error-message"> * </span>
+                        </label>
+                        <ng-select formControlName="dimension" bindLabel="col" bindValue="col">
+                          <ng-option [value]="col.col" *ngFor="let col of pivotData.row">
+                            {{ col.col }}
+                          </ng-option>
+                        </ng-select>
+                        <div class="error-message" *ngIf="fc.dimension.errors?.required && pivotSubmitted">Please select Aggregation Dimentions </div>
+
+                        <label class="form-control-label mt-1">Aggregate Function <span class="error-message"> * </span></label>
+                        <ng-select id="input-schema"  formControlName="aggregate">
+                          <!-- <ng-option value="" select disabled>
+                         Aggregate
+                        </ng-option> -->
+                          <ng-option value="min">Min</ng-option>
+                          <ng-option value="max">Max</ng-option>
+                          <ng-option value="sum">Sum</ng-option>
+                          <ng-option value="count">Count</ng-option>
+                          <ng-option value="average">Average</ng-option>
+                        </ng-select>
+                        <div class="error-message" *ngIf="fc.aggregate.errors?.required && pivotSubmitted">Please select Aggregate function </div>
+
+                        <div formArrayName="items">
+                          <div class="row" [formGroupName]="i" *ngFor="
+                              let item of pivotForm?.get('items').controls;
+                              let i = index
+                            ">
+                            <div class="col-6">
+                              <label class="form-control-label mt-1">Filters
+                              </label>
+                              &nbsp;<i class="fas fa-filter fa-xs"></i>
+                              <ng-select formControlName="filterColumnData" bindLabel="col" bindValue="col"
+                                (change)="fetchColumnFilter(i, true)">
+                                <ng-option [value]="col.col" *ngFor="let col of pivotData.row">
+                                  {{ col.col }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                            <div class="col-6">
+                              <label class="form-control-label mt-3"></label>
+                              <ng-select formControlName="filterValueData" bindLabel="label" bindValue="id"
+                                [closeOnSelect]="false" [multiple]="true" [items]="filterColumn"
+                                [virtualScroll]="true"
+                                (scrollToEnd)="fetchColumnFilter(i)"
+
+                                (change)="valueFilteredData(i)">
+
+                                <ng-template ng-header-tmp let-item="item">
+                                  <input type="checkbox" value="" [ngModel]="checkAll" (change)="toggleCheckAll($event)"
+                                    [ngModelOptions]="{ standalone: true }" />
+                                  All
+                                </ng-template>
+                                <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                                  <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected"
+                                    [ngModelOptions]="{ standalone: true }" />
+                                  {{ item }}
+                                </ng-template>
+                              </ng-select>
+
+                              <!-- <ng-multiselect-dropdown #multiSelect
+                              [placeholder]="'Select City'"
+                              [data]="filterColumn"
+                              [formControlName]="filterValueData"
+                              [settings]="settings"
+                              [disabled]="false"
+                              (change)="valueFilteredData(i)"
+                              >
+                            </ng-multiselect-dropdown> -->
+                            </div>
+                          </div>
+                        </div>
+                        <div class="d-flex flex-row flex-sm-row justify-content-between">
+                          <div class="mt-2" data-toggle="tooltip" title="Add More Filter">
+                            <!-- <button (click)="addItem()">Add</button> -->
+                            <i class="fas fa-plus fa-lg" (click)="addFilterItems()"></i>
+                          </div>
+                          <div class="mt-2" data-toggle="Remove" title="Delete">
+                            <i class="fas fa-trash fa-lg" (click)="removeOrClearFilter()"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                      <span class="ng-value-icon right input-group-lg" (click)="clear(item)" aria-hidden="true">×</span>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+           <!-- <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" (click)="onSubmittingPivotDatas()"> -->
+
+            <button type="submit" class="btn btn-primary"    (click)="onSubmittingPivotDatas()">
+              Draw Pivot
+            </button>
+            <button type="reset" class="btn btn-danger" (click)="pivotModal.hide()">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-header">
+      <div class="header-left">
+        <div class="header-text">
+          <div class="header-title">Get Data</div>
+          <h6>
+            Note:Preview is limited to top 1000 only, for creating report all
+            data will be used
+          </h6>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="btn btn-primary btn-sm" [disabled] = "previewDataDisable" *ngIf="dataForm?.controls?.source?.value !== 'Data Lake'"
+          (click)="saveAsExcel('output-table')">
+          Export Data
+        </button>
+      </div>
+      <div class="header-right">
+        <button class="btn btn-primary btn-sm m-2" *ngIf="
+            dataForm?.controls?.source?.value === 'Data Lake' ||
+            dataForm?.controls?.source?.value === 'SQL Server'
+          " data-toggle="modal" [disabled] ="previewDataDisable"  data-target="#exampleModalCenter" (click)="createPivotTable()">
+          Create Pivot
+        </button>
+      </div>
+    </div>
+<!--  Getting The Data In The Form Of Table After Clicking On Preview Button -->
+    <div class="p-4" *ngIf="!tableData?.length">
+      <h6 class="fst-italic m-0">No Records Found</h6>
+    </div>
+    <div class="table-responsive shadow" *ngIf="tableData?.length">
+      <table class="table" id="output-table">
+        <thead class="header" id="header-design">
+          <tr *ngIf="dataForm?.controls?.source?.value !== 'SQL Server'">
+            <th *ngFor="let item of tableData[0] ">{{ item }}</th>
+          </tr>
+           <tr *ngIf=" dataForm?.controls?.source?.value === 'SQL Server'">
+            <th *ngFor="let item of tableData[0] | keyvalue">{{ item.key }}</th>
+          </tr>
+        </thead>
+        <tbody *ngIf=" dataForm?.controls?.source?.value === 'SQL Server'" >
+          <tr *ngFor="let row of tableData; index as i" [@fadeIn]="{
+              value: '',
+              params: { duration: '300ms', delay: i * 60 + 'ms' }
+            }">
+            <th *ngFor="let item of tableData[0] | keyvalue" >
+              {{ row[item.key]| customDecimalPipe }}
+            </th>
+          </tr>
+        </tbody>
+          <tbody *ngIf="dataForm?.controls?.source?.value !== 'SQL Server' ">
+          <tr *ngFor="let row of tableData; index as i" [@fadeIn]="{
+              value: '',
+              params: { duration: '300ms', delay: i * 60 + 'ms' }
+            }">
+            <th *ngFor="let item of tableData[i +1] " >
+              {{ item }}
+            </th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- Displaying The Pivot Data -->
+<div class="page-header" *ngIf="isPivotShown">
+  <div class="header-left">
+    <div class="header-text">
+      <div class="header-title">Pivot Table</div>
+    </div>
+  </div>
+</div>
+<div class="row" *ngIf="
+    dataForm?.controls?.source?.value === 'Data Lake' ||
+    dataForm?.controls?.source?.value === 'SQL Server'
+  ">
+  <div class="col-12 col-md-12">
+    <div class="table-responsive">
+      <table class="table table-striped" id="output-table">
+        <!-- <thead class="header-dark" id="header-design">
+          <th *ngFor="let item of row | keyvalue">
+            {{ [item.value] }}
+          </th>
+        </thead> -->
+        <tbody class="pivot">
+          <ng-container *ngFor="let row of PivotItemValue; index as i">
+            <tr>
+              <td *ngFor="let item of row">
+                {{ item | customDecimalPipe }}
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+    <div class="text-end" *ngIf="isPivotShown">
+      <button class="btn btn-sm btn-primary m-2" [disabled] = "PivotItemValue.length === 0"  (click)="savePivotInformation()">
+        Save Pivot
+      </button>
+      <!-- <button class="btn btn-sm btn-primary" (click)="convertToCSV(PivotItemValue)">
+    Save
+  </button> -->
+    </div>
+  </div>
+</div>
+<!-- To Save The Pivot Data With Name  -->
+<div #savePivotFileNameModalRef class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Save the File</h5>
+        <span type="button" class="close" (click)="savePivotFileName.hide()" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fa fa-times"></i></span>
+        </span>
+      </div>
+      <div class="modal-body">
+        <form class="sign-up-form" [formGroup]="pivotFileName">
+          <div class="row">
+            <div class="col-12">
+              <div class="form-group mb-2 input-group-lg">
+                <input class="form-control input-lg" type="text" formControlName="pivotFileName"
+                  placeholder="Name the File" />
+                  <div class="error-message" *ngIf="pivotFileName.controls.pivotFileName.errors?.required && pivotFilename">Please Enter file name </div>
+
+                <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                  <span class="ng-value-icon right input-group-lg" (click)="clear(item)" aria-hidden="true">×</span>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <!-- <button type="submit" class="btn btn-primary" (click)="savePivotData()" data-bs-dismiss="modal"> -->
+
+        <button type="submit" class="btn btn-primary" (click)="savePivotData()" >
+          Submit
+
+        </button>
+        <button type="reset" class="btn btn-danger" (click)="shareModal.hide()">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="page-header">
+  <div class="header-left">
+    <div class="header-text">
+      <div class="header-title">Create Report</div>
+    </div>
+  </div>
+</div>
+
+ <!-- chart condition and preview -->
+<div class="row">
+  <div class="col-12 col-md-12">
+    <div class="card shadow mb-3" [@fadeIn]="{ value: '', params: { duration: '100ms' } }">
+      <div class="card-body" id="output-pivot-table">
+        <div class="details-header">
+          <div class="details-header-text">Choose Report Details</div>
+        </div>
+        <form [formGroup]="chartForm">
+          <div class="row">
+            <div class="col-6 form-group">
+              <!-- FOR CHART -->
+              <label class="form-control-label mt-3">Report Type</label>
+              <ng-select formControlName="type" (change)="onChartTypeChange($event)">
+                <ng-option [value]="''" selected disabled>Choose Report Type</ng-option>
+                <ng-option [value]="chart.type" *ngFor="let chart of chartTypes">
+                  <span class="text-capitalize">{{ chart.label }}</span>
+                </ng-option>
+              </ng-select>
+            </div>
+            <div class="col-6 form-group">
+              <label class="form-control-label mt-3">Title</label>
+              <input class="form-control" type="text" formControlName="title" id="input-chart-name"
+                placeholder="Report Title" />
+            </div>
+            <ng-container>
+              <!-- PIE, DOUGHNUT AND TABLE CHART CONTROLS -->
+              <div [ngClass]="
+                  chartForm?.controls?.type?.value === 'pie' ||
+                  chartForm?.controls?.type?.value === 'doughnut' ||
+                  chartForm?.controls?.type?.value === 'grid'
+                    ? 'col-12'
+                    : 'col-6'
+                ">
+                <div *ngIf="
+                    chartForm?.controls?.type?.value === 'pie' ||
+                    chartForm?.controls?.type?.value === 'doughnut' ||
+                    chartForm?.controls?.type?.value === 'grid'
+                  " [@fadeIn]="{ value: '', params: { duration: '300ms' } }">
+                  <div class="form-group mt-2">
+                    <label class="form-control-label mt-1">Choose Dataset</label>
+                    <ng-select formControlName="xCoord" bindLabel="col" bindValue="col" [multiple]="
+                        chartForm?.controls?.type?.value === 'grid'
+                          ? true
+                          : false
+                      ">
+                      <ng-option [value]="col.col" *ngFor="let col of columns.x">
+                        {{ col.col }}
+                      </ng-option>
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+              <!-- LINE AND BAR CHART CONTROLS -->
+              <div *ngIf="
+                  chartForm?.controls?.type?.value === 'line' ||
+                  chartForm?.controls?.type?.value === 'group-bar' ||
+                  chartForm?.controls?.type?.value === 'stacked-bar' ||
+                  chartForm?.controls?.type?.value === 'bar'
+                " [@fadeIn]="{ value: '', params: { duration: '300ms' } }">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="d-flex justify-content-between mt-2">
+                      <label class="form-control-label"> X axis </label>
+                      <div class="d-flex justify-content-end">
+                        <label class="form-control-label">Time</label>
+                        <div class="form-check form-switch ms-3 my-0">
+                          <input class="form-check-input" type="checkbox" formControlName="isXCoordTime" />
+                        </div>
+                      </div>
+                    </div>
+                    <ng-select formControlName="xCoord" bindLabel="col" bindValue="col">
+                      <ng-option [value]="col.col" *ngFor="let col of columns.x">{{ col?.col }}</ng-option>
+                    </ng-select>
+                  </div>
+                  <div class="col-6">
+                    <div class="d-flex justify-content-between mt-2">
+                      <label class="form-control-label"> Y axis </label>
+                    </div>
+                    <ng-select *ngIf="columns.y" [items]="columns.y" bindLabel="col" bindValue="col"
+                      formControlName="yCoord" [multiple]="
+                        chartForm?.controls?.type?.value === 'group-bar' ||
+                        chartForm?.controls?.type?.value === 'stacked-bar'
+                          ? true
+                          : false
+                      ">
+                    </ng-select>
+                  </div>
+                </div>
+                <!-- RADAR CHART CONTROLS -->
+                <!-- <div *ngIf="chartForm?.controls?.type?.value === 'radar'"
+                  [@fadeIn]="{ value: '', params: { duration: '300ms' } }">
+                  <label class="form-control-label mt-3">Data to Compare</label>
+                  <ng-select formControlName="xCoord" bindLabel="col" bindValue="col" (change)="onChangeXCoord()">
+                    <ng-option [value]="col.col" *ngFor="let col of columns.x">{{ col.col }}</ng-option>
+                  </ng-select>
+                  <label class="form-control-label mt-3 mb-2">Basis of comparison</label>
+                  <ng-container *ngFor="let basis of getRadarFormArray(); let i = index">
+                    <div class="form-check" [formGroup]="basis">
+                      <input class="form-check-input" type="checkbox" formControlName="selected"
+                        [id]="'basis-id-' + i" />
+                      <label class="form-check-label" [for]="'basis-id-' + i">
+                        {{ basis?.controls?.basis?.value }}
+                      </label>
+                    </div>
+                  </ng-container>
+                </div> -->
+              </div>
+            </ng-container>
+          </div>
+
+          <div class="text-end mt-2">
+            <button class="btn btn-primary btn-sm me-2" type="reset">
+              Clear Filter
+            </button>
+            <button class="btn btn-primary btn-sm me-2" type="button" [disabled]="chartForm.invalid" (click)="onPreview()">
+              Preview
+            </button>
+            <ng-container *ngIf="isSaveButton">
+              <button class="btn btn-primary btn-sm" type="button" (click)="onSave()">
+                Save
+              </button>
+            </ng-container>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- TO DISPLAY THE CHART -->
+
+  <!-- <div  #charts> </div> -->
+
+  <div class="col-12 col-md-12" id="scrollToChart" *ngIf="isChartShown  ">
+    <div class="card shadow mb-3" [style.display]="chart ? 'block' : 'none'"
+      *ngIf="chartForm?.controls?.type?.value !== 'grid'" [@fadeIn]="{ value: '', params: { duration: '300ms' } }">
+      <div class="card-body p-2 p-sm-4 d-flex justify-content-center responsive-chart">
+        <div style="width: 100%" >
+          <canvas id="chart" #chartCanvas style="max-height: 500px"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="card shadow mb-3" [style.display]="chart ? 'block' : 'none'">
+      <div class="table-responsive shadow" *ngIf="
+          chart?.reportData?.length &&
+          chartForm?.controls?.type?.value === 'grid'
+        ">
+        <div class="card-header d-flex justify-content-between">
+          {{ chartForm.controls.title.value }}
+          <button class="btn btn-sm btn-primary" (click)="saveAsExcel('output-report-table')">
+            <i class="fa fa-download"></i>
+          </button>
+        </div>
+        <div class="card-body">
+          <table class="table" id="output-report-table">
+            <thead class="header">
+              <tr>
+                <th *ngFor="let item of chart.reportData[0] | keyvalue">
+                  {{ item.key }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of chart.reportData; index as i" [@fadeIn]="{
+                  value: '',
+                  params: { duration: '300ms', delay: i * 60 + 'ms' }
+                }">
+                <th *ngFor="let item of chart.reportData[0] | keyvalue">
+                  {{ row[item.key] }}
+                </th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

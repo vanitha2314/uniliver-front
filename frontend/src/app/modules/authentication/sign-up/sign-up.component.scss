@@ -1,0 +1,104 @@
+@import "src/assets/scss/variables.scss";
+
+.sign-up-wrapper {
+  min-height: 100vh;
+  display: flex;
+  background-color: $app-primary-dark;
+  background-position: left;
+  background-size: auto;
+  align-items: center;
+  padding: 25px 0;
+
+  .left-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    @media (max-width: 767px) {
+      display: none;
+    }
+    @media (max-width: 768px) and (min-width: 1200px) {
+      align-items: center;
+    }
+
+    .logo {
+      animation: fadeIn 0.5s;
+      max-height: 400px;
+
+      @media (max-width: 767px) {
+        max-height: 150px;
+        width: unset;
+      }
+      @media (max-width: 1200px) {
+        width: 70%;
+        height: auto;
+      }
+    }
+  }
+
+  .sign-up-card {
+    background: #fff;
+
+    &-header {
+      padding: 25px 50px 0;
+      text-align: center;
+
+      .logo {
+        max-width: 18px;
+      }
+    }
+
+    &-body {
+      padding: 15px 45px;
+
+      @media (min-width: 1024px) {
+        padding: 20px 60px;
+      }
+
+      .sign-up-card-heading {
+        text-transform: uppercase;
+        text-align: center;
+        margin-bottom: 1.5rem;
+
+        @media (min-width: 1024px) {
+          margin: 1.5rem 0;
+        }
+      }
+
+      .sign-up-form {
+        animation: fadeIn 0.5s;
+
+        .edit-control {
+          &:after {
+            content: unset !important;
+          }
+        }
+
+        .form-footer {
+          text-align: center;
+          margin-top: 1rem;
+
+          @media (min-width: 1024px) {
+            margin-top: 3rem;
+          }
+        }
+      }
+    }
+
+    .logo {
+      max-width: 23px;
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,16 @@
+<div class="tree-view">
+  <ng-container *ngFor="let table of tables">
+    <div class="node-label" (click)="onExpand(table)">
+      {{table}}
+    </div>
+    <div class="sub-section " [id]="table" [ngClass]="{collapse: selectedTable !== table}">
+      <div class="node-label" *ngFor="let column of schemaObject && schemaObject[table]">
+        <input type="checkbox" class="form-check-input mx-2" name="columns" [id]="'col-'+column"
+          (click)="onSelect($event, column)">
+        <label [attr.for]="'col-'+column">
+          {{column}}
+        </label>
+      </div>
+    </div>
+  </ng-container>
+</div>
