@@ -1,0 +1,32 @@
+*{
+  color: black;
+}
+.header{
+  margin-left: 10px;
+  margin-top: 10px;
+  font-size: 25px;
+}
+.content{
+  display: flex;
+  min-height: 85px;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  > label{
+    font-size: 15px;
+  }
+}
+.button{
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 15px;
+  padding-bottom: 15px;
+  > button{
+    background-color: #d5dfe1;
+    width: 60px;
+    border-radius: 5px;
+    border-color: #75a2e6;
+    height: 32px;
+    font-size: 17px;
+  }
+}

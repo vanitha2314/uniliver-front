@@ -1,0 +1,237 @@
+.layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+  .header-container {
+    display: flex;
+    height: $app-header-height;
+    width: 100%;
+    z-index: 2;
+    background: #F3F2F1;
+
+    .menu-toggler-container {
+      display: flex;
+      width: fit-content;
+      justify-content: center;
+      align-items: center;
+
+      .menu-toggler {
+        font-size: 22px;
+        padding: 0 20px;
+      }
+    }
+
+    .logo-container {
+      display: flex;
+      width: fit-content;
+      justify-content: center;
+      align-items: center;
+
+      #appLogoImage {
+        height: 50%;
+        width: auto;
+      }
+    }
+    .user-details {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+
+      .header-details {
+        .user-name {
+          margin-bottom: -5px;
+        }
+        .user-role {
+          font-size: 0.8rem;
+        }
+      }
+      .user-icon {
+        font-size: 1.3rem;
+        padding: 20px;
+        cursor: pointer;
+      }
+      .dropdown-menu.dropdown-collapsed {
+        display: none;
+      }
+      .dropdown-menu {
+        animation: fadeIn 0.3s;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        top: 60px;
+        right: 10px;
+        width: 200px;
+        z-index: 10;
+        padding: 30px 20px;
+
+        .user-profile {
+          height: 60px;
+          width: 60px;
+          border-radius: 50%;
+        }
+        .dropdown-item {
+          cursor: pointer;
+          .dropdown-item-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+          }
+          // .dropdown-item-link {
+          // }
+        }
+      }
+    }
+  }
+
+  .content-wrapper {
+    display: flex;
+    height: calc(100vh - #{$app-footer-height} - #{$app-header-height});
+
+    .sidenav-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: $app-sidenav-width;
+      background: #F3F2F1;
+      padding: 20px 0;
+      z-index: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      transition: all 0.5s;
+      border-top: 0.5px solid $app-primary-light2;
+      .user-profile {
+        transition-duration: 0.5s;
+        // display: flex;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 0;
+
+        img.profile-picture {
+          transition-duration: 0.5s;
+          height: 100px;
+          width: 100px;
+          border-radius: 50%;
+        }
+
+        .user-role,
+        .user-name {
+          transition-duration: 0.5s;
+        }
+      }
+
+      .sidenav-menu {
+        .sidenav-menu-list {
+          list-style-type: none;
+          padding: 0;
+          margin: 0;
+
+          .sidenav-menu-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 10px;
+            cursor: pointer;
+            border-left: 5px solid;
+            border-color: transparent;
+
+            .sidenav-menu-item-icon,
+            .sidenav-menu-item-text {
+              // color: $app-primary-dark2;
+              color: #000;
+            }
+
+            .sidenav-menu-item-icon {
+              font-size: 1.4rem;
+              padding: 0 5px;
+            }
+
+            .sidenav-menu-item-text {
+              transition-duration: 0.5s;
+              font-size: 1rem;
+              padding: 0 5px;
+              font-weight: 400;
+            }
+
+            &.active {
+              .sidenav-menu-item-text {
+                font-weight: 900;
+              }
+              border-color: $app-primary-border-color;
+              background-color: $app-menu-selected-background;
+            }
+
+            &:focus {
+              outline: none;
+            }
+
+            &:not(.active) {
+              &:hover {
+                background-color: $app-menu-selected-background;
+              }
+            }
+          }
+        }
+      }
+
+      &.sidebar-collapsed {
+        overflow: hidden;
+        width: $app-sidenav-collapsed-width;
+        .sidenav-menu-list {
+          .sidenav-menu-item-text {
+            font-size: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+        }
+        .user-profile {
+          transition: all 0.5s;
+          padding: 0px;
+          img.profile-picture {
+            height: 35px;
+            width: 35px;
+          }
+          .user-role,
+          .user-name {
+            font-size: 0;
+            padding: 0;
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .footer-container {
+    height: $app-footer-height;
+    width: 100%;
+    z-index: 2;
+    background-color: #fff;
+
+    .footer-text {
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      margin: 0;
+      height: inherit;
+      border-top: 1px solid #eee;
+    }
+  }
+}
+
+@media only screen and (max-width: 450px) {
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

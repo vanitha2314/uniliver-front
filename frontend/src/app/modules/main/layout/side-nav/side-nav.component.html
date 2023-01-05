@@ -1,0 +1,35 @@
+<div class="sidenav-container sidebar-collapsed shadow side_main">
+	<div class="user-profile">
+		<img class="shadow profile-picture" src="assets/images/profile.jpeg" alt="">
+		<h5 class="user-name mb-0 mt-3">Richard Parker</h5>
+		<p class="user-role">Admin</p>
+	</div>
+	<div class="sidenav-menu menu_list">
+		<ul class="sidenav-menu-list ">
+			<ng-container *ngFor="let menuItem of menu">
+				<li class="sidenav-menu-item" [routerLink]="menuItem.path" *ngIf="menuItem.auth"
+					[ngClass]="{ 'active': menuItem.basePath === basePath }" (click)="toggleShow(menuItem.menu)">
+					<i class="fa sidenav-menu-item-icon" data-toggle="tooltip" [title]="menuItem.menu" [ngClass]="menuItem.icon"></i>
+					<span class="sidenav-menu-item-text">{{ menuItem.menu }}</span>
+				</li>
+				<div *ngFor="let child of menuItem.children" style="margin-left:20px;">
+					<ng-container *ngIf="isShown && menuItem?.menu === 'Managed'">
+						<ul class="sidenav-menu-item sidebar-collapsed " [routerLink]="child.path" *ngIf="child.auth"
+						[ngClass]="{ 'active': child.basePath === basePath }" >
+						<i class="fa sidenav-menu-item-icon" data-toggle="tooltip" [title]="child.menu" [ngClass]="child.icon"></i>
+						<span class="sidenav-menu-item-text">{{ child.menu }}</span>
+					</ul>
+					</ng-container>
+	                 <ng-container *ngIf="reportShown && menuItem.menu === 'Create'">
+						<ul class="sidenav-menu-item sidebar-collapsed " [routerLink]="child.path" *ngIf="child.auth"
+						[ngClass]="{ 'active': child.basePath === basePath }" >
+						<i class="fa sidenav-menu-item-icon" data-toggle="tooltip" [title]="child.menu" [ngClass]="child.icon"></i>
+						<span class="sidenav-menu-item-text">{{ child.menu }}</span>
+					</ul>
+					 </ng-container>
+				</div>
+			</ng-container>
+
+		</ul>
+	</div>
+</div>

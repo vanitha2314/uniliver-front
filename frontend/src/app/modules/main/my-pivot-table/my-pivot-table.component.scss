@@ -1,0 +1,119 @@
+.mypivot{
+  display: flex;
+  padding: 0px 40px 10px;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+.header{
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0;
+  width: 100%;
+  height: 54px;
+  color: black;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 4.9;
+  letter-spacing: 0.5px;
+}
+.header__name{
+  text-align: center;
+  height: 54px;
+  width:90vh;
+}
+.header__refresh{
+   height: 54px;
+   color: #5269ab;
+   cursor: pointer;
+}
+.table_header{
+  background:#7a7777;
+}
+.table_odd{
+  background: #bbb5b54d;
+  cursor: pointer;
+}
+.table_even{
+  background: #b4b2aec7;
+   cursor: pointer;
+
+}
+.table_name{
+    width: 31vw;
+}
+.data_label{
+  font-size: 15px;
+  color: black;
+    font-weight: 600;
+}
+.table__label{
+  font-size: 15px;
+    color: #f0e6e6;
+    font-weight: 800;
+}
+.main{
+  // display: flex;
+  // flex-direction: column;
+  // flex-wrap: nowrap;
+  min-width: 110vh;
+}
+.main-card{
+border-radius: 0px;
+
+}
+.main-card-body{
+  display: flex;
+  justify-content: space-between;
+  padding: 13px;
+}
+.main-card-body__label_span
+{
+  color: black;
+  font-weight: 900;
+
+}
+.backred{
+background:#ff0000d9;
+padding: 0px 9px;
+border-radius: 70%;
+margin-right: 5px;
+}
+.backyellow{
+background-color: #ffc107;
+padding: 0px 9px;
+border-radius: 50%;
+margin-right: 5px;
+}
+.backgreen{
+background: #1ca722;
+padding: 0px 9px;
+border-radius: 50%;
+margin-right: 5px;
+}
+table, tr, th{
+  border: 1px solid #ece5e5 !important;
+  border-collapse: collapse;
+}
+.clickbtn{
+  margin: 0 10px;
+}
+.buttons{
+  height: 30px;
+  padding-top: 0px;
+  padding-bottom: 2px;
+}
+.cursurestrict{
+ cursor:no-drop;
+ text-align: center;
+}
+.cursorPointer{
+  cursor:pointer;
+  text-align: center;
+}
+.mandator{
+  color: red;
+}
+

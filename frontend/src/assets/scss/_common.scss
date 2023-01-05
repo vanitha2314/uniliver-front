@@ -1,0 +1,368 @@
+@import "./charts";
+
+body {
+  background-color: $app-background-color;
+  min-height: 100vh;
+  font-family: $app-font-family;
+  color: $app-text;
+  font-size: 14px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #90a4ae white;
+}
+
+// ::-webkit-scrollbar-track {
+//   // background: white;
+// }
+
+::-webkit-scrollbar-thumb {
+  background-color: #90a4ae;
+  border-radius: 6px;
+  border: 1px solid white;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
+.form-control {
+  // border-color: $app-primary-border-color;
+  border-color: #158fb4;;
+  color: #000;
+  font-size: 14px;
+
+  &.ng-invalid.ng-touched {
+    border-color: $app-invalid-input-border-color;
+  }
+
+  &:focus {
+    border-color: $app-primary-border-color;
+    box-shadow: 0 0 0 0.1rem $app-primary-light;
+  }
+
+  &:disabled {
+    background-color: #f2f2f2;
+    cursor: not-allowed;
+  }
+}
+
+.shadow {
+  box-shadow: 0.5rem 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.page-wrapper {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+  width: 100%;
+  .page-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    min-height: 60px;
+    padding-left: 25px;
+    padding-right: 25px;
+    margin-bottom: 0.5rem;
+
+    &.header-sticky {
+      position: sticky;
+      top: 0;
+      z-index: 997;
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      flex-grow: 1;
+
+      .back-btn {
+        cursor: pointer;
+        margin-right: 0.5rem;
+        font-size: 1.2rem;
+      }
+
+      .header-text {
+        .header-title {
+          font-size: 1.3rem;
+          font-weight: 600;
+        }
+
+        .header-subtitle {
+          font-size: 1rem;
+          margin-bottom: 0;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      flex-shrink: 0;
+    }
+  }
+
+  .page-container {
+    flex-grow: 1;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+}
+
+.card {
+  animation: fadeIn 0.3s;
+  // border-color: $app-primary-light2;
+  border-radius: 10px;
+
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  &.info-card > .info-card-body {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 300px;
+    .card-info-title {
+      font-size: 1.2rem;
+      margin-bottom: 0.3rem;
+      margin-right: 1rem;
+      h2 {
+        margin-bottom: 0;
+      }
+    }
+
+    .card-info-icon {
+      justify-self: fex-end;
+      font-size: 3rem;
+      margin-right: 1rem;
+      color: $app-icon;
+    }
+  }
+}
+
+.table-responsive {
+  animation: fadeIn 0.3s;
+  max-height: 75vh !important;
+}
+
+.table {
+  border-radius: 15px !important;
+  // background-color:#c3ddf3; ;
+
+  thead,
+  tbody,
+  tr,
+  td,
+  th {
+    border: none !important;
+  }
+  th,
+  td {
+    padding: 0.3rem;
+  }
+  td:first-of-type,
+  th:first-of-type {
+    padding-left: 0.5rem !important;
+  }
+
+  .header-dark {
+    background-color: $app-primary-dark3;
+    color: #fff;
+  }
+}
+
+.btn.btn-primary {
+  // background-color: $app-primary-dark3;
+  background-color: #158fb4;
+  //  border-color: none;
+}
+
+.tree-view {
+  .sub-section {
+    padding-left: 1rem;
+    &.hide-section {
+      display: none;
+    }
+  }
+  i {
+    padding: 0 0.3rem;
+  }
+  div.node-label:hover {
+    cursor: pointer;
+    background-color: $app-primary-light2;
+  }
+}
+
+.form-check-input:checked {
+  background-color: $app-primary-dark3;
+  border-color: $app-primary-dark3;
+}
+
+.form-check-input:focus {
+  border-color: $app-primary-dark3;
+  box-shadow: 0 0 0 0.1rem $app-primary-light2;
+}
+
+.form-check-input[type="checkbox"] {
+  border-radius: 0.1em;
+}
+
+.form-switch {
+  .form-check-input[type="checkbox"] {
+    border-radius: 2em;
+  }
+}
+
+.details-header {
+  display: flex;
+  .details-header-text {
+    font-size: 1.1rem;
+    color: black;
+    margin-bottom: 0.2rem;
+  }
+}
+
+
+@media only screen and (max-width: 450px) {
+  .card {
+    card-body {
+      padding: 1rem;
+    }
+
+    &.info-card > .info-card-body {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      min-width: unset;
+      width: 100% !important;
+      .card-info-title {
+        font-size: 1.2rem;
+        margin-bottom: 0.3rem;
+        h2 {
+          margin-bottom: 0;
+        }
+      }
+
+      .card-info-icon {
+        justify-self: fex-end;
+        font-size: 3rem;
+        margin-right: 1rem;
+      }
+    }
+  }
+
+  .page-wrapper {
+    .page-header {
+      padding-left: 20px;
+      padding-right: 20px;
+      margin-bottom: 0.2rem;
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        flex-shrink: 0;
+      }
+    }
+
+    .page-container {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
+}
+
+.swal2-modal {
+  background-color: rgba(63, 255, 106, 0.69);
+  border: 3px solid white;
+}
+
+.swal2-title {
+  font-size: 1rem !important;
+  padding: 1.5rem !important;
+}
+
+.toast-warning {
+  background-color: #f0aa49 !important;
+}
+
+.toast-info {
+  background-color: #42bbe0 !important;
+}
+
+.toast-error {
+  background-color: #e33d34 !important;
+}
+
+.toast-success {
+  background-color: #57c257 !important;
+}
+
+// .form-control {
+// }
+
+.ng-select .ng-select-container {
+  border-color: #158fb4;
+  color: #000;
+  font-size: 14px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+// Form Error message
+small.text-danger {
+  display: block;
+  margin-top: 0.1rem;
+}
+// .dialog-menu-panel {
+//   .mat-dialog-container {
+//       padding: 0 !important;
+//       background: #ffffff;
+//       box-shadow: 2px 2px 5px 1px rgba(117, 113, 199, 0.5);
+//       border-radius: 4px;
+
+//       ion-col {
+//           padding: 0 !important;
+//       }
+//   }
+// }
+.dialogClass{
+  .mat-dialog-container {
+          padding: 0 !important;
+      background: #ffffff;
+      box-shadow: 2px 2px 5px 1px rgba(117, 113, 199, 0.5);
+      border-radius: 4px;
+      z-index: 22222222;
+  }
+}

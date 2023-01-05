@@ -1,0 +1,17 @@
+.responsive-chart {
+  canvas {
+    height: 350px !important;
+  }
+}
+
+.card-body {
+  height: auto !important;
+}
+
+@media (max-width: 576px) {
+  .responsive-chart {
+    canvas {
+      height: 400px !important;
+    }
+  }
+}

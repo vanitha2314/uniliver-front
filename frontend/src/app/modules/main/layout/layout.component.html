@@ -1,0 +1,16 @@
+<div class="layout-wrapper">
+	<div class="header-wrapper">
+		<app-header (toggleSideNavCanvas)="toggleMobileSideNavCanvas()" [isLandingPage]="isLandingPage"></app-header>
+	</div>
+	<div class="content-wrapper">
+		<app-side-nav *ngIf="!isLandingPage"></app-side-nav>
+		<div class="sidenav-wrapper">
+		</div>
+		<div class="page-wrapper">
+			<router-outlet></router-outlet>
+		</div>
+	</div>
+	<div class="footer-wrapperZ">
+		<app-footer></app-footer>
+	</div>
+</div>

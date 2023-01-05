@@ -1,0 +1,13 @@
+.side_main{
+  min-width: 75px;
+}
+.menu_list{
+  overflow: auto;
+}
+.menu_list::-webkit-scrollbar-track {
+  background: none;
+}
+.menu_list::-webkit-scrollbar-thumb
+  {
+background: none;
+  }

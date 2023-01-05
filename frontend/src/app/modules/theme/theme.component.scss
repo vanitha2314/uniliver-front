@@ -1,0 +1,56 @@
+@import "../../../assets/scss/styles.scss";
+
+.color-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 900;
+  height: 100px;
+  width: 100px;
+  margin-right: 0.7rem;
+  margin-bottom: 0.7rem;
+}
+.primary-dark {
+  background-color: $app-primary-dark;
+  color: white;
+}
+.primary-dark2 {
+  background-color: $app-primary-dark2;
+  color: white;
+}
+.primary-dark3 {
+  background-color: $app-primary-dark3;
+  color: white;
+}
+.primary-dark4 {
+  background-color: $app-primary-dark4;
+  color: white;
+}
+.primary-light {
+  background-color: $app-primary-light;
+  color: black;
+}
+.primary-light2 {
+  background-color: $app-primary-light2;
+  color: black;
+}
+.menu-selected-background {
+  background-color: $app-menu-selected-background;
+  color: black;
+}
+
+.text-normal {
+  color: $app-text;
+}
+
+.text-dark {
+  color: $app-text-dark;
+}
+
+.text-light {
+  color: $app-text-light;
+}
+
+.theme-icon {
+  color: $app-icon;
+}

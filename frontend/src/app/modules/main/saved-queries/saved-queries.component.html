@@ -1,0 +1,143 @@
+<div class="page-header">
+  <div class="header-left">
+    <div class="header-text">
+      <div class="header-title">
+        Saved Queries
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-container">
+  <div class="row">
+    <div class="col-12 mb-3">
+      <ul class="nav nav-pills">
+        <li class="nav-item" *ngFor="let item of tabs">
+          <a class="nav-link" [ngClass]="item?.key === selectedTab ? 'active' : ''" role="button"
+            (click)="onTabChange(item?.key)">{{item?.value}}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="table-responsive shadow">
+    <ng-container *ngIf="selectedTab === 'savedByMe'">
+      <table class="table table-striped table-hover">
+        <thead class="header">
+          <tr>
+            <th>Query</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="!queries?.length">
+            <tr>
+              <td colspan="6">
+                <span class="mt-2 fst-italic">No Queries found</span>
+              </td>
+            </tr>
+          </ng-container>
+
+          <ng-container *ngFor="let query of queries; index as i">
+            <tr [@fadeIn]="{ value: '', params: { duration: '300ms', delay: i * 60 + 'ms' }}">
+              <td style="cursor: pointer;" routerLink="dashboard" [queryParams]="{query: query.id}">{{query?.queryName}}
+              </td>
+              <td *ngIf="selectedTab === 'savedByMe'">
+                <div class="text-center" style="display: flex; flex-shrink: 1;">
+                  <button class="btn btn-sm py-0 mr-1" (click)="copyToClipboard(query.query)">
+                    <i class="fas fa-clipboard"></i>
+                  </button>
+                  <!-- <button class="btn btn-sm py-0 mr-1">
+                    <i class="fa fa-trash"></i>
+                  </button> -->
+                  <button class="btn btn-sm py-0 mr-1" (click)="onShare(query)">
+                    <i class="fa fa-share"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+
+        </tbody>
+      </table>
+    </ng-container>
+  </div>
+  <div class="table-responsive shadow">
+    <ng-container *ngIf="selectedTab !== 'savedByMe'">
+      <table class="table table-striped table-hover">
+        <thead class="header-dark">
+          <tr>
+            <th>Query</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="!queries?.length">
+            <tr>
+              <td colspan="6">
+                <span class="mt-2 fst-italic">No Queries found</span>
+              </td>
+            </tr>
+          </ng-container>
+
+          <ng-container *ngFor="let query of queries; index as i">
+            <tr [@fadeIn]="{ value: '', params: { duration: '300ms', delay: i * 60 + 'ms' }}">
+              <td [queryParams]="{query: query.id}">{{query?.queryName}}
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </ng-container>
+  </div>
+  <div #shareModalRef class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Share Report</h5>
+          <span type="button" class="close" (click)="shareModal.hide()" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true"><i class="fa fa-times"></i></span>
+          </span>
+        </div>
+        <div class="modal-body">
+          <form class="sign-up-form" [formGroup]="shareForm">
+            <div class="row">
+              <div class="col-12">
+                <div class="form-group mb-2">
+                  <label for="first-name-input" class="form-control-label">
+                    Select User
+                  </label>
+
+                  <ng-select [items]="users" [multiple]="true" bindLabel="firstName" bindValue="id"
+                    formControlName="users" placeholder="Select Users">
+                    <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                      <span class="ng-value-label">
+                        {{item?.firstName}} {{item?.lastName}}
+                      </span>
+                      <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                    </ng-template>
+
+                    <ng-template ng-option-tmp let-item="item">
+                      <div>{{item?.firstName}} {{item?.lastName}}</div>
+                      <div>{{item?.email}}</div>
+                    </ng-template>
+                  </ng-select>
+                </div>
+              </div>
+              <ng-container *ngIf="shareForm?.controls?.users?.touched">
+                <small class="text-danger" *ngIf="shareForm?.controls?.users?.errors?.required">
+                  <i class="fa fa-exclamation-circle"></i> Please select at lease one user
+                </small>
+                <small class="text-danger" *ngIf="shareForm?.controls?.users?.errors?.maxLength">
+                  <i class="fa fa-exclamation-circle"></i> Please select at lease one user
+                </small>
+              </ng-container>
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" (click)="onShareSubmit()">Share</button>
+        </div>
+      </div>
+    </div>
+  </div>

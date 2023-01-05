@@ -1,0 +1,308 @@
+<div class="page-header">
+  <div class="header-left">
+    <div class="header-text">
+      <div class="header-title">
+        Reports
+      </div>
+    </div>
+  </div>
+</div>
+<div class="page-container">
+  <div class="row">
+    <div class="col-12 mb-3">
+      <ul class="nav nav-pills">
+        <li class="nav-item" *ngFor="let item of tabs">
+          <a class="nav-link" [ngClass]="item?.key === selectedTab ? 'active' : ''" role="button"
+            (click)="onTabChange(item?.key)">{{item?.value}}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 col-md-6" *ngFor="let report of reports; let i = index">
+      <div class="card shadow mb-3">
+        <div class="card-header d-flex justify-content-between p-3">
+          <div class="header-details">
+            <div class="header-detail-item">
+              <p *ngIf="report?.firstName || report.lastName">Created By: <small class="fst-italic">
+                  {{report?.firstName}} {{report?.lastName}}</small></p>
+              <p>Created On: <small class="fst-italic"> {{report?.createdOn | date:'d MMM YYYY h:m a'}}</small></p>
+              <p>Updated On: <small class="fst-italic"> {{report?.updatedOn | date:'d MMM YYYY h:m a'}}</small></p>
+            </div>
+          </div>
+          <div class="text-end">
+            <button class="btn btn-sm btn-primary me-1"data-toggle="tooltip" title="Schedule" (click)="refreshment(report)" *ngIf="selectedTab === 'createdByMe'">
+              <i class="fa fa-calendar-check" ></i></button>
+            <button class="btn btn-sm btn-primary me-1" data-toggle="tooltip" title="Download"
+              (click)="report?.reportData?.chartData?.reportData ? saveAsExcel('table-'+report.id) : downloadAsImage(i)"><i
+                class="fa fa-download" ></i></button>
+            <button class="btn btn-sm btn-primary me-1" data-toggle="tooltip" title="Edit"[routerLink]="['/reports/details', selectedTab, report.id]"
+              *ngIf="selectedTab === 'createdByMe' || (selectedTab !== 'deletedByMe' && report?.permission === 'editor')"><i
+                class="fa fa-pencil" ></i></button>
+            <ng-container *ngIf="selectedTab !== 'sharedToMe' && selectedTab !== 'deletedByMe'">
+              <button class="btn btn-sm btn-primary me-1" data-toggle="tooltip" title="Delete"(click)="onDelete(report)"><i
+                  class="fa fa-trash" ></i></button>
+              <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="Share" (click)="onShare(report)"> <i class="fa fa-share" ></i></button>
+            </ng-container>
+            <ng-container *ngIf="selectedTab === 'deletedByMe'">
+              <button class="btn btn-sm btn-primary me-1" data-toggle="tooltip" title="Restore" (click)="onRestore(report)"> <i class="fa fa-history"></i></button>
+            </ng-container>
+            <!-- <ng-container *ngIf="selectedTab === 'deletedByMe'">
+              <button class="btn btn-sm btn-primary" (click)="onPermanentlyDelete(report)" data-toggle="tooltip" title="Delete" > <i class="fa fa-trash"></i></button>
+            </ng-container> -->
+          </div>
+        </div>
+        <div class="card-body responsive-chart p-2 p-sm-4" *ngIf="!report?.reportData?.chartData?.reportData">
+          <canvas [id]="'chart-'+report.id"></canvas>
+        </div>
+        <ng-container *ngIf="!!report?.reportData?.chartData?.reportData">
+          <div class="card-body">
+            <div class="d-flex justify-content-center mb-2" style="font-weight: 600; font-size: 0.8rem;">
+           {{report?.reportData?.title}}
+            </div>
+            <div class="table-responsive">
+              <table class="table table-striped" [id]="'table-'+report.id" style="max-height: 500px;">
+                <thead class="header-dark">
+                  <tr>
+                    <th *ngFor="let item of report.reportData.chartData.reportData[0] | keyvalue">{{item.key}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of report.reportData.chartData.reportData;index as i"
+                    [@fadeIn]="{value: '', params: { duration: '300ms', delay: i * 60 + 'ms'}}">
+                    <th *ngFor="let item of report.reportData.chartData.reportData[0] | keyvalue">{{row[item.key]}}</th>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-12" *ngIf="!reports?.length">
+      <h6 class="fst-italic mx-3">No Reports Found</h6>
+    </div>
+
+    <footer *ngIf= "false" class="page-footer font-small fixed-bottom">
+      <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-end px-3 pagination-lg">
+     
+      <li class="page-item" [ngClass]="currentPage  === 0 ? 'disabled' : ''" (click)="
+          currentPage  > 0 &&
+            onSelectPage(currentPage - 1)
+        ">
+
+        <a class="page-link" role="button" tabindex="-1" aria-disabled="true">
+          <i class="fa fa-chevron-left"></i></a>
+      </li>
+
+      <li class="page-item" >
+        <a class="page   -link" role="button" >{{
+        currentPage +1
+          }}</a> 
+      </li>
+   
+     <li class="page-item" [ngClass]="
+          (currentPage + 1) === totalPage ? 'disabled' : ''
+        " (click)="
+          currentPage + 1 < totalPage &&
+            onSelectPage(currentPage + 1)
+        ">
+        <a class="page-link" role="button"><i class="fa fa-chevron-right"></i></a>
+       
+      </li>
+    </ul>
+  </nav>
+</footer>
+
+  </div>
+</div>
+
+<div #shareModalRef class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Share Report</h5>
+        <span type="button" class="close" (click)="shareModal.hide()" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fa fa-times"></i></span>
+        </span>
+      </div>
+      <div class="modal-body">
+        <form class="sign-up-form" [formGroup]="shareForm">
+          <div class="row">
+            <div class="col-12">
+              <div class="form-group mb-2">
+                <label for="first-name-input" class="form-control-label">
+                  Select User
+                </label>
+                <ng-select [items]="users" [multiple]="true" bindLabel="firstName" formControlName="users"
+                  placeholder="Select Users">
+                  <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                    <span class="ng-value-label">
+                      {{item?.firstName}} {{item?.lastName}}
+                    </span>
+                    <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                  </ng-template>
+
+                  <ng-template ng-option-tmp let-item="item">
+                    <div>{{item?.firstName}} {{item?.lastName}}</div>
+                    <div>{{item?.email}}</div>
+                  </ng-template>
+                </ng-select>
+              </div>
+            </div>
+            <ng-container *ngIf="shareForm?.controls?.users?.touched">
+              <small class="text-danger" *ngIf="shareForm?.controls?.users?.errors?.required">
+                <i class="fa fa-exclamation-circle"></i> Please select at lease one user
+              </small>
+              <small class="text-danger" *ngIf="shareForm?.controls?.users?.errors?.maxLength">
+                <i class="fa fa-exclamation-circle"></i> Please select at lease one user
+              </small>
+            </ng-container>
+            <div class="col-12">
+              <div class="form-group mb-2">
+                <label for="first-name-input" class="form-control-label">
+                  Permissions
+                </label>
+                <select class="form-control" name="permissions" id="input-permissions" formControlName="permission">
+                  <option value="viewer">Viewer</option>
+                  <option value="editor">Editor</option>
+                </select>
+              </div>
+            </div>
+            <ng-container *ngIf="shareForm?.controls?.permission?.touched">
+              <small class="text-danger" *ngIf="shareForm?.controls?.permission?.errors?.required">
+                <i class="fa fa-exclamation-circle"></i> Please select permission
+              </small>
+            </ng-container>
+            <!-- <div class="d-flex justify-content-start">
+              <label class="form-control-label">Send Email</label>
+              <div class="form-check form-switch ms-3 my-0">
+                <input class="form-check-input" type="checkbox" formControlName="sendEmail" [checked]="false" />
+              </div>
+            </div> -->
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary me-2" data-bs-dismiss="modal" (click)="onShareSubmit(true)">Share Over Email</button>
+        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" (click)="onShareSubmit()">Share</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div #refreshModalRef class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Refreshment Details</h5>
+        <span type="button" class="close" (click)="refrshModal.hide()" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true"><i class="fa fa-times"></i></span>
+        </span>
+      </div>
+      <div class="modal-body">
+        <form class="form-group" [formGroup]="dataForm">
+          <div class="row">
+            <div class="col-12">
+              <div class="form-group">
+                <h5>
+                  Refreshment Type
+                </h5>
+                <div class="m-1">
+                  <ng-select name="refreshment" id="refreshmentType" formControlName="refreshmentType" (change)="selectSource()" >
+                    <ng-option value="" selected disabled>Choose Type</ng-option>
+                    <ng-option [value]="'Daily'" >Daily</ng-option>
+                    <ng-option [value]="'Weekly'">Weekly</ng-option>
+                    <ng-option [value]="'Monthly'">Monthly</ng-option>
+                  </ng-select>
+                </div>
+                <div class="input-group-md mt-3 row">
+                  <div *ngIf="dataForm?.controls?.refreshmentType?.value === 'Monthly'" class="input-group-md row" >
+                    <h6>Select Date And Time</h6>
+                    <div class="col-md-6">
+                      <input type="date" class="form-control input-lg" formControlName="date">
+                    </div>
+                    <div class="col-md-3">
+                      <select class="createFormSelect-text ml-2 form-control input-lg" formControlName="time">
+                        <option *ngFor="let last of lasts">
+                          {{last}}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">    
+                      <select class="createFormSelect-text ml-2 form-control input-lg" formControlName="median">
+                        <option hidden value="" disabled selected>AM</option>
+                        <option value="AM" selected >AM</option>
+                        <option value="PM">PM</option>
+                      </select>
+                    </div>
+                    
+                  </div>
+                  <div *ngIf="dataForm?.controls?.refreshmentType?.value === 'Weekly'" class="input-group-md row">
+                    <h6>Select Day And Time</h6>
+                    <div class="col-md-6">
+                      <select class="createFormSelect-text ml-2 form-control input-lg" formControlName="day">
+                        <option *ngFor="let day of days">
+                          {{day}}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">
+                      <!-- <input type="time" class="form-control" step="3600" placeholder="select Time" formControlName="time"> -->
+                      <select class="createFormSelect-text ml-2 form-control input-lg" formControlName="time">
+                        <option *ngFor="let last of lasts">
+                          {{last}}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">
+                      <!-- <input type="time" class="form-control" step="3600" placeholder="select Time" formControlName="time"> -->
+                      <select class="createFormSelect-text ml-2 form-control input-lg" formControlName="median">
+                        <option hidden value="" disabled selected>AM</option>
+                        <option value="AM" selected >AM</option>
+                        <option value="PM">PM</option>
+                      </select>
+                    </div>
+                    
+                  </div>
+                  <div *ngIf="dataForm?.controls?.refreshmentType?.value === 'Daily'"  class="input-group-md"> 
+                    <h6>Select Time</h6>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <!-- <input type="time" class="form-control" step="3600" placeholder="select Time" formControlName="time"> -->
+                        <select class="createFormSelect-text ml-2 form-control input-lg" formControlName="time">
+                          <option *ngFor="let last of lasts">
+                            {{last}}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="col-md-6">
+                        <!-- <input type="time" class="form-control" step="3600" placeholder="select Time" formControlName="time"> -->
+                        <select class="createFormSelect-text ml-2 form-control input-lg" formControlName="median" [attr.selected]="index == 1 ? true : null" >
+                          <option hidden value="" disabled selected>AM</option>
+                          <option value="AM" selected >AM</option>
+                          <option value="PM">PM</option>
+                        </select>
+                      </div>
+
+                    </div>
+                 
+                  </div>
+                </div>
+   
+              <!-- <span class="ng-value-icon right" aria-hidden="true">×</span> -->       
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary me-2" data-bs-dismiss="modal" (click)="onSchdule()">Submit</button>
+        <!-- <button type="submit" class="btn btn-primary" (click)="onShareSubmit()">Share</button> -->
+      </div>
+    </div>
+  </div>
+</div>

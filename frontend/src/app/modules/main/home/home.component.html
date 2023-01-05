@@ -1,0 +1,37 @@
+<div class="d-flex main">
+    <div class="containers">
+      <div class="d-flex flex-row">
+        <div class="flex-column">
+        <div class="d-flex flex-row flex-sm-row row-wrapper">
+          <div class="one global-container" routerLink="/dashboard">
+            <p class="text float-right mr-5">Create Report</p>
+          </div>
+          <div class="seven global-container" routerLink="/reports">
+            <p class="text">My Reports</p>
+          </div>
+        </div>
+        <div class="d-flex flex-row flex-sm-row row-wrapper" style="margin-top: -10px;">
+          <div class="three global-container" routerLink="/saved-queries">
+            <p class="text">My SQL Scripts</p>
+          </div>
+          <div class="global-container ">
+            <!-- <p class="text mt-3">Reports</p> -->
+            <img src="../../../../assets/images/U_pull_it.png" class="img-text">
+          </div>
+          <div class="four global-container" routerLink="/upload">
+            <p class="text">My Uploaded Files</p>
+          </div>
+        </div>
+        <div class="d-flex flex-row flex-sm-row row-wrapper">
+          <div class="five global-container" data-bs-toggle="tooltip" data-bs-placement="top" title="you cannot access this page" routerLink="{{!isUsersActionEnabled ? '/' : '/user-management'}}" [class.disabled]= "!isUsersActionEnabled">
+            <p class="text">User Management</p>
+          </div>
+          <div class="six global-container" routerLink="/summary">
+            <p class="text">Summary</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
